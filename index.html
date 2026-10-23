@@ -44,4 +44,8 @@ b.addEventListener('mousedown',down);b.addEventListener('mouseup',up);b.addEvent
 ['pointerdown','pointerup','click'].forEach(function(n){b.addEventListener(n,stop)});
 function add(){document.body.appendChild(b);document.body.appendChild(hint)}if(document.body)add();else addEventListener('DOMContentLoaded',add)})();</script>
 <script>/*bgm*/window.BGM_CFG={"id":"alex-galaxy-math","base":"music/","v":"20261023m","tracks":{"title":[109.090909,1.0],"explore":[115.2,1.0]},"map":{},"pos":"left:10px;top:58px","oneshot":"warp","poll":function(){var t=document.getElementById('title'),m=window.__M,w=!!(m&&m.FX&&m.FX.warping),G=window.__bgmW||(window.__bgmW={on:false,n:0});if(w&&!G.on)G.n++;G.on=w;return{area:(t&&!/\bhide\b/.test(t.className))?'title':'explore',oneshot:G.n?('w'+G.n):''}}};</script><script src="music/bgm.js?v=20261023m" defer></script>
+<script>/*sw-reload*/(function(){if(!('serviceWorker' in navigator))return;var sw=navigator.serviceWorker,had=!!sw.controller,done=false;
+sw.addEventListener('controllerchange',function(){if(!had){had=true;return}if(done)return;done=true;try{if(sessionStorage.swReloaded&&Date.now()-sessionStorage.swReloaded<10000)return;sessionStorage.swReloaded=Date.now()}catch(e){}location.reload()});
+function up(){if(sw.getRegistration)sw.getRegistration().then(function(g){if(g)g.update()}).catch(function(){})}
+document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')up()});})();</script>
 </body></html>
