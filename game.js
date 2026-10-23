@@ -121,6 +121,8 @@ tap($('hMap'),function(){sfx('tap',.5);openMap()});tap($('hLog'),function(){sfx(
 Array.prototype.forEach.call(document.querySelectorAll('.x'),function(x){tap(x,function(){sfx('tap',.4);hide(x.getAttribute('data-c'))})});
 addEventListener('resize',function(){if(!$('map').classList.contains('hide'))openMap()});
 var FX=window.makeFX($('sky'),{onBlast:function(){S.blasts++;badgeCheck();save()},onWarp:onWarpDone,onFuelFull:function(){sfx('levelup',.5);banner('WARP SPEED!','')},sfx:sfx});
+try{if(S.fuel>0&&S.fuel<5)FX.fuel=S.fuel}catch(e){}
+function hubSave(){try{S.fuel=FX.fuel||0}catch(e){}save()}window.hubSave=hubSave;addEventListener('hubsave',hubSave);addEventListener('pagehide',hubSave);document.addEventListener('visibilitychange',function(){if(document.hidden)hubSave()});
 FX.setDest(S.at);toTitle();
 window.__M={S:function(){return S},grade:function(ok,ms){if(!curSk)curSk=pickSkill();var r=grade(ok,ms);curSk=pickSkill();return{L:S.L,lvl:lvl(),skill:curSk.id,skLv:curSk.lv}},newQ:newQ,cur:function(){return{q:cur.q,a:cur.a,sk:curSk.id,lv:curSk.lv}},answer:answer,openParent:openParent,openMap:openMap,openLog:openLog,openBadges:openBadges,factCard:factCard,start:start,FX:FX,reset:function(){S=fresh();save()}};
 if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(function(){});
