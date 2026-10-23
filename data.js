@@ -1,0 +1,31 @@
+'use strict';
+// Destinations: real places carry verified facts (sources listed in README); legend planets are made up for fun.
+var DEST=[
+{id:'moon',name:'The Moon',lv:1,c1:'#f2f2f2',c2:'#7d7d86',real:1,facts:['12 astronauts walked on the Moon between 1969 and 1972.','There is no wind or rain on the Moon, so their footprints can last for millions of years!'],src:'NASA'},
+{id:'sun',name:'The Sun',lv:2,c1:'#fff6a8',c2:'#ff8a00',glow:'#ffb000',real:1,facts:['The Sun is a star \u2014 the only star in our solar system.','About 1.3 million Earths could fit inside the Sun!','Sunlight takes about 8 minutes to zoom to Earth.'],src:'NASA Sun Facts'},
+{id:'mars',name:'Mars',lv:3,c1:'#ff9a6a',c2:'#a8361a',real:1,facts:['Mars looks red because its dust has rusty iron in it.','Mars has the biggest volcano in the solar system: Olympus Mons, about 3 times taller than Mount Everest!','Mars has 2 small moons, Phobos and Deimos.'],src:'NASA Mars Facts; NASA/JPL Olympus Mons'},
+{id:'belt',name:'Asteroid Belt',lv:4,c1:'#c9b08a',c2:'#5a4630',em:'\u2604\ufe0f',real:1,facts:['The asteroid belt is a giant ring of space rocks between Mars and Jupiter.','The biggest thing in it is Ceres, a dwarf planet.'],src:'NASA'},
+{id:'dino',name:'Dino Planet',lv:5,c1:'#8dff7a',c2:'#1d6b2a',em:'\ud83e\udd96',real:0,facts:['Legend says T. rexes in space helmets surf on comets here!','Their roar is so loud it makes the volcanoes sneeze.'],src:'Made up for fun'},
+{id:'jupiter',name:'Jupiter',lv:6,c1:'#f3d2a2',c2:'#a86a3a',bands:1,real:1,facts:['Jupiter is the biggest planet. More than 1,300 Earths could fit inside it!','A day on Jupiter is only about 10 hours long.','Its Great Red Spot is a giant spinning storm, like a huge hurricane.'],src:'NASA \u201cWhat Is Jupiter?\u201d'},
+{id:'io',name:'Io (Jupiter\u2019s moon)',lv:8,c1:'#fff27a',c2:'#c77a12',real:1,facts:['Io is the most volcanic world in the whole solar system!','Its volcanoes are powered by squeezing from Jupiter\u2019s gravity.'],src:'NASA Io Facts'},
+{id:'europa',name:'Europa (Jupiter\u2019s moon)',lv:9,c1:'#f4f0ea',c2:'#a07a5a',real:1,facts:['Europa is covered in a shell of ice.','Scientists think a giant salty ocean is hiding under the ice!','NASA\u2019s Europa Clipper spacecraft launched in 2024 to study it.'],src:'NASA Europa Facts; Europa Clipper'},
+{id:'saturn',name:'Saturn',lv:10,c1:'#ffe6a6',c2:'#b88a3e',ring:1,real:1,facts:['Saturn\u2019s rings are made of chunks of ice and rock.','Saturn is so light for its size that in a big enough bathtub, it would float!'],src:'NASA Saturn; NSSDC fact sheet'},
+{id:'lava',name:'Lava World',lv:12,c1:'#ffb03a',c2:'#6b0d00',em:'\ud83c\udf0b',glow:'#ff4a00',real:0,facts:['Legend says the lava here is so hot it bubbles like soda.','Rock monsters play dodgeball with fireballs \u2014 bring your shields!'],src:'Made up for fun'},
+{id:'pluto',name:'Pluto',lv:13,c1:'#f6e1c8',c2:'#8a6a52',real:1,facts:['Pluto is a dwarf planet.','In 2015, NASA\u2019s New Horizons spacecraft flew past Pluto and found a giant heart-shaped icy plain!'],src:'NASA New Horizons'},
+{id:'kuiper',name:'Kuiper Belt',lv:15,c1:'#b9d8ff',c2:'#3a5a8a',em:'\u2744\ufe0f',real:1,facts:['The Kuiper Belt is a huge ring of icy worlds past Neptune.','In 2019, New Horizons flew past Arrokoth \u2014 the farthest object ever explored up close, about 4 billion miles away!'],src:'NASA Arrokoth; New Horizons'},
+{id:'proxima',name:'Proxima Centauri',lv:17,c1:'#ff9a7a',c2:'#b8201a',glow:'#ff3a2a',real:1,facts:['Proxima Centauri is the closest star to our Sun.','Its light takes a little over 4 years to reach us.','It is a small red dwarf star, and at least one planet goes around it.'],src:'NASA Hubble; NASA Exoplanets'},
+{id:'orion',name:'Orion Nebula',lv:19,c1:'#ff8ad8',c2:'#3a2aa8',glow:'#c060ff',neb:1,real:1,facts:['The Orion Nebula is a giant cloud of gas and dust where new stars are being born \u2014 a star nursery!','It is about 1,500 light-years away, and you can see it without a telescope in Orion\u2019s sword.'],src:'NASA Hubble Messier 42'},
+{id:'betelgeuse',name:'Betelgeuse',lv:21,c1:'#ffb27a',c2:'#d02a10',glow:'#ff5a1a',real:1,facts:['Betelgeuse is a red supergiant star in Orion\u2019s shoulder.','If it sat where our Sun is, it would swallow the orbits of Mercury, Venus, Earth, and Mars!','Someday it will explode as a supernova.'],src:'NASA (2024); NASA JPL Night Sky'},
+{id:'sgra',name:'Sagittarius A*',lv:23,c1:'#000',c2:'#000',bh:1,real:1,facts:['Sagittarius A* is the giant black hole at the center of our Milky Way galaxy.','It is about 4 million times heavier than our Sun!','Scientists showed the first picture of it in 2022, using telescopes all around the Earth.'],src:'Event Horizon Telescope; NASA JPL'}
+];
+var RANKS=[[1,'Space Cadet'],[4,'Rocket Rookie'],[7,'Star Pilot'],[10,'Asteroid Ace'],[13,'Comet Captain'],[16,'Galaxy Commander'],[19,'Nebula Admiral'],[22,'Black Hole Legend']];
+var BADGES=[
+['first','\ud83d\ude80','First Blast','Answer your first problem'],
+['s5','\ud83d\udd25','Hot Streak','5 in a row'],['s10','\ud83c\udf86','Supernova Streak','10 in a row'],['s20','\ud83c\udf1f','Unstoppable','20 in a row'],
+['lv5','\ud83e\udd96','Dino Planet','Reach level 5'],['lv10','\ud83e\ude90','Ring Rider','Reach level 10'],['lv15','\u2744\ufe0f','Ice Explorer','Reach level 15'],['lv20','\ud83c\udf0c','Nebula Navigator','Reach level 20'],['lv24','\ud83d\udd73\ufe0f','Black Hole Hero','Reach level 24'],
+['blast25','\u2604\ufe0f','Rock Smasher','Blast 25 asteroids & aliens'],['blast100','\ud83d\udca5','Mega Smasher','Blast 100'],
+['back5','\ud83d\udcaa','Never Give Up','Get 5 right just after a miss'],
+['facts8','\ud83d\udcd6','Space Scientist','Collect 8 logbook cards'],['factsAll','\ud83c\udf93','Galaxy Professor','Collect every card'],
+['blitz15','\u26a1','Blitz Pilot','Score 15 in Blitz'],['master3','\ud83c\udfc5','Triple Master','Master 3 math topics']
+];
+var TOPICS=['Addition','Subtraction','Place Value','Skip Counting','Multiplication','Division','Fractions','Money','Time','Patterns','Logic','Word Problems'];
