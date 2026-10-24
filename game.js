@@ -16,6 +16,13 @@ function sfx(n,vol){if(!AC||!BUF[n])return;var now=performance.now();if(LAST[n]&
  VO=VO.filter(function(v){if(v.n===n){try{v.s.stop()}catch(e){}return false}return v.end>AC.currentTime});
  while(VO.length>=3){var o=VO.shift();try{o.s.stop()}catch(e){}}
  var s=AC.createBufferSource(),g=AC.createGain();g.gain.value=vol||0.8;s.buffer=BUF[n];s.connect(g);g.connect(AC.destination);s.start();VO.push({n:n,s:s,end:AC.currentTime+BUF[n].duration})}
+// ---------- spoken questions: natural pre-recorded clips (voice/*.mp3) chained in order ----------
+var VB={},vGen=0,vSrc=[];
+function vLoad(k){if(VB[k])return VB[k];VB[k]=new Promise(function(res){var x=new XMLHttpRequest();x.open('GET','voice/'+k+'.mp3');x.responseType='arraybuffer';
+ x.onload=function(){try{AC.decodeAudioData(x.response,res,function(){res(null)})}catch(e){res(null)}};x.onerror=function(){res(null)};x.send()}).then(function(b){if(!b)delete VB[k];return b});return VB[k]}
+function hush(){vGen++;vSrc.forEach(function(s){try{s.stop()}catch(e){}});vSrc=[]}
+function speakQ(q){if(!AC||!window.QV)return;hush();var g=vGen,ks=QV.parts(q);Promise.all(ks.map(vLoad)).then(function(bs){if(g!==vGen)return;var t=AC.currentTime+.05;
+ bs.forEach(function(b){if(!b)return;var s=AC.createBufferSource(),gn=AC.createGain();gn.gain.value=1;s.buffer=b;s.connect(gn);gn.connect(AC.destination);s.start(t);vSrc.push(s);t+=b.duration+.06})})}
 // ---------- helpers ----------
 function lvl(){return Math.floor(S.L)}
 function rank(l){var r=RANKS[0][1];RANKS.forEach(function(x){if(l>=x[0])r=x[1]});return r}
@@ -48,15 +55,16 @@ function grade(ok,ms){var s=curSk,t=T(s.tp),before=lvl(),fast=ms<s.t*1000;S.tota
 function newQ(){curSk=pickSkill();lastSk=curSk;cur=curSk.g();typed='';qStart=performance.now();busy=false;renderQ()}
 // ---------- question UI ----------
 function renderQ(){var c=cur;$('qtop').textContent=curSk.tp+' \u2022 Level '+lvl();var q=$('qtext');q.innerHTML=String(c.q).replace(/\n/g,'<br>');q.className=String(c.q).length>34?'long':'';
- $('qvis').innerHTML=c.vis||'';var pad=$('pad');pad.innerHTML='';hide('fb');$('card').className='';
+ $('qvis').innerHTML=c.vis||'';var sp=$('qsay');if(!sp){sp=document.createElement('button');sp.id='qsay';sp.setAttribute('aria-label','Read it to me');sp.textContent='\ud83d\udd0a';$('card').appendChild(sp);tap(sp,function(){unlock();speakQ(cur.q)})}
+ if(/[a-z]{3}/i.test(String(c.q)))setTimeout(function(){if(cur===c)speakQ(c.q)},250);else hush();var pad=$('pad');pad.innerHTML='';hide('fb');$('card').className='';
  if(c.ch){hide('ansBox');c.ch.forEach(function(v){var b=document.createElement('button');b.className='k mc'+(c.em?' em':'');b.textContent=v;tap(b,function(){if(busy)return;sfx('tap',.5);answer(v===String(c.a))});pad.appendChild(b)})}
  else{show('ansBox');$('ansBox').textContent='';['1','2','3','4','5','6','7','8','9','\u232b','0','GO'].forEach(function(v){var b=document.createElement('button');b.className='k'+(v==='GO'?' go':v==='\u232b'?' del':'');b.textContent=v;
   b.addEventListener('pointerdown',function(e){e.preventDefault();if(busy)return;b.classList.add('pr');setTimeout(function(){b.classList.remove('pr')},120);key(v)});pad.appendChild(b)})}}
 function key(v){if(v==='GO'){if(!typed)return;answer(parseInt(typed,10)===cur.a);return}sfx('tap',.45);if(v==='\u232b')typed=typed.slice(0,-1);else if(typed.length<5)typed=(typed==='0'?'':typed)+v;$('ansBox').textContent=fmtT(typed)}
 function fmtT(t){return t.length>3?fmt(t):t}
 document.addEventListener('keydown',function(e){if($('game').classList.contains('hide')||busy||!cur||cur.ch)return;if(/^[0-9]$/.test(e.key))key(e.key);else if(e.key==='Backspace')key('\u232b');else if(e.key==='Enter')key('GO')});
-function answer(ok){if(busy)return;busy=true;var ms=performance.now()-qStart,up=grade(ok,ms);
- if(ok){$('card').className='good';FX.shoot();sfx('zap');if(blitz)bScore++;
+function answer(ok){if(busy)return;busy=true;hush();var ms=performance.now()-qStart,up=grade(ok,ms);
+ if(ok){$('card').className='good';FX.shoot();if(S.streak>=3&&S.streak%3===0&&FX.jet)FX.jet();sfx('zap');if(blitz)bScore++;
   var fe=[5,10,15,20,25,30,40,50];if(fe.indexOf(S.streak)>=0){setTimeout(function(){FX.fireworks(S.streak>=10?10:6);sfx('firework');banner(S.streak+' IN A ROW!',S.streak>=10?'SUPERNOVA!':'Hot streak!')},500)}
   if(up>0){setTimeout(function(){sfx('levelup');banner('LEVEL '+lvl()+'!',rank(lvl()));FX.fireworks(4)},S.streak%5===0?1500:400)}
   hud();setTimeout(function(){if(!FX.warping)newQ()},650)}

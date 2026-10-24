@@ -30,3 +30,7 @@ Each real fact was checked against NASA or other reputable sources. "Space Legen
 - **Sagittarius A*** (Lv 23, Real Fact): Sagittarius A* is the giant black hole at the center of our Milky Way galaxy. It is about 4 million times heavier than our Sun! Scientists showed the first picture of it in 2022, using telescopes all around the Earth. _Source: Event Horizon Telescope; NASA JPL_
 
 Word-problem space numbers (level 11): 6 crewed Apollo landings × 2 moonwalkers = 12; Jupiter day ≈ 10 h; sunlight ≈ 8 min; New Horizons at Pluto 2015 and Arrokoth 2019; Mars has 2 moons; Olympus Mons ≈ 3× Everest.
+
+## New in 1.1 (Oct 2026)
+- 🔊 **Questions are read aloud** in a natural recorded voice (Piper "ryan" clips in `voice/`, stitched from phrase + number clips by `voice.js`). Word problems read themselves; tap 🔊 to hear any question. Regenerate with `bash src/genvoice.sh` after editing questions in `skills.js`.
+- 🦖✈️💥 **Dinos, jets and bigger explosions:** T. rex and fighter-jet targets show up on every planet, kills now blow up with shockwave rings, debris and a bigger shake, a wingman jet strafes the target every 3-answer streak, and new T. rex / jet / KABOOM word problems at levels 7, 11, 15 and 22.

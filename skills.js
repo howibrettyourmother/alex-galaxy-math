@@ -39,7 +39,10 @@ var SK=[
  {q:'Your ship has '+a+' lasers. You build '+b+' more. How many lasers now?',a:a+b,h:a+' + '+b},
  {q:'There are '+(a+b)+' asteroids. You blast '+b+'. How many are left?',a:a,h:(a+b)+' \u2212 '+b},
  {q:'Mars has 2 moons. Earth has 1 moon. How many moons is that altogether?',a:3,h:'2 + 1'},
- {q:a+' aliens are on the bridge. '+b+' more beam in. How many aliens?',a:a+b,h:a+' + '+b}])}},
+ {q:a+' aliens are on the bridge. '+b+' more beam in. How many aliens?',a:a+b,h:a+' + '+b},
+ {q:a+' T. rexes are stomping on Dino Planet. '+b+' more hatch from eggs. How many T. rexes?',a:a+b,h:a+' + '+b},
+ {q:(a+b)+' jets fly in a row. '+b+' zoom off to land. How many jets are still flying?',a:a,h:(a+b)+' \u2212 '+b},
+ {q:'You blast '+a+' space rocks. Then you blast '+b+' more. KABOOM! How many rocks did you blast?',a:a+b,h:a+' + '+b}])}},
 {id:'subR',lv:8,tp:'Subtraction',t:12,g:function(){var a=R(31,95),b=R(12,a-10);if(a%10>=b%10){b=Math.max(11,b-(b%10)+(a%10)+1);if(b%10===0)b--;if(b>=a)b=a-R(5,9)}return{q:a+' \u2212 '+b+' = ?',a:a-b,h:'Not enough ones? Trade 1 ten for 10 ones.'}}},
 {id:'money2',lv:8,tp:'Money',t:14,g:function(){var l=[],n=R(3,6);for(var i=0;i<n;i++)l.push(P([1,5,10,25,25]));l.sort(function(a,b){return b-a});var s=l.reduce(function(a,b){return a+b},0);return{q:'How many cents?',vis:coinsSvg(l),a:s,h:'Quarters are 25\u00a2: 25, 50, 75, 100!'}}},
 {id:'pv3',lv:9,tp:'Place Value',t:9,g:function(){var h=R(1,9),t=R(1,9),o=R(0,9),n=h*100+t*10+o;return P([{q:'What is the value of the '+t+' in '+n+'?',a:t*10,h:'It is in the tens place.'},{q:h+' hundreds + '+t+' tens + '+o+' ones = ?',a:n,h:'Hundreds, tens, ones: '+h+t+o},{q:'What is 10 more than '+n+'?',a:n+10,h:'Only the tens digit changes.'},{q:'What is 100 less than '+n+'?',a:n-100,h:'Only the hundreds digit changes.'}])}},
@@ -53,6 +56,8 @@ var SK=[
  {q:'Sunlight takes about 8 minutes to reach Earth. How many minutes for a trip there and back?',a:16,h:'8 + 8'},
  {q:'New Horizons flew past Pluto in 2015 and Arrokoth in 2019. How many years apart?',a:4,h:'2019 \u2212 2015'},
  {q:'Mars has 2 moons. How many moons do 4 planets like Mars have?',a:8,h:'2 + 2 + 2 + 2'},
+ {q:'A T. rex had 2 short arms. How many arms do 5 T. rexes have?',a:10,h:'2 + 2 + 2 + 2 + 2'},
+ {q:'A fighter jet has 2 wings. How many wings do 6 jets have?',a:12,h:'6 \u00d7 2'},
  {q:'Olympus Mons is about 3 times taller than Mount Everest. If Everest were 9 blocks tall, how tall is Olympus Mons?',a:27,h:'9 \u00d7 3'}])}},
 {id:'add3',lv:11,tp:'Addition',t:16,g:function(){var a=R(125,689),b=R(108,950-a);return{q:a+' + '+b+' = ?',a:a+b,h:'Ones, then tens, then hundreds. Carry when you get 10+.'}}},
 {id:'sub3',lv:12,tp:'Subtraction',t:18,g:function(){var a=R(300,950),b=R(105,a-50);return{q:a+' \u2212 '+b+' = ?',a:a-b,h:'Trade from the next place when you need to.'}}},
@@ -63,6 +68,8 @@ var SK=[
 {id:'mult10',lv:14,tp:'Multiplication',t:7,g:function(){var a=R(2,10),b=R(2,10);return{q:a+' \u00d7 '+b+' = ?',a:a*b,h:a+' groups of '+b+'.'}}},
 {id:'word2',lv:15,tp:'Word Problems',t:22,g:function(){var a=R(3,6),b=R(2,5),c=R(2,9);return P([
  {q:a+' ships each carry '+b+' aliens. Then '+c+' more aliens arrive. How many aliens?',a:a*b+c,h:a+' \u00d7 '+b+' = '+a*b+', then + '+c},
+ {q:a+' jets each drop '+b+' fireworks. Then '+c+' more go BOOM. How many fireworks?',a:a*b+c,h:a+' \u00d7 '+b+' = '+a*b+', then + '+c},
+ {q:'A dino nest has '+b+' eggs. There are '+a+' nests. '+c+' eggs hatch. How many eggs are left?',a:a*b-c,h:a+' \u00d7 '+b+' = '+a*b+', then \u2212 '+c},
  {q:'You had '+(a*b+c)+' fuel cells. You used '+c+', then split the rest into '+a+' equal piles. How many in each pile?',a:b,h:'('+(a*b+c)+' \u2212 '+c+') \u00f7 '+a}])}},
 {id:'div10',lv:15,tp:'Division',t:9,g:function(){var b=R(3,10),q=R(2,10);return{q:(b*q)+' \u00f7 '+b+' = ?',a:q,h:'? \u00d7 '+b+' = '+b*q}}},
 {id:'change',lv:16,tp:'Money',t:16,g:function(){var p=5*R(3,19);return{q:'You pay $1 (100\u00a2) for a '+p+'\u00a2 space snack. How much change?',a:100-p,h:'Count up from '+p+' to 100.'}}},
@@ -77,6 +84,7 @@ var SK=[
 {id:'feq',lv:22,tp:'Fractions',t:14,g:function(){var d=P([2,3,4]),k=R(2,4),ans=k+'/'+(d*k);return{q:'Which is the same as 1/'+d+'?',ch:mc(ans,[k+'/'+(d*k+1),'1/'+(d*k),(k+1)+'/'+(d*k),d+'/'+k]),a:ans,h:'Multiply top and bottom by '+k+'.'}}},
 {id:'word3',lv:22,tp:'Word Problems',t:25,g:function(){var a=R(3,9),b=R(3,8),c=R(2,4);return P([
  {q:'A star cruiser has '+c+' decks. Each deck has '+b+' rows of '+a+' seats. How many seats?',a:a*b*c,h:c+' \u00d7 '+b+' \u00d7 '+a},
+ {q:c+' jet squadrons each have '+b+' jets. Each jet fires '+a+' rockets. How many rockets?',a:a*b*c,h:c+' \u00d7 '+b+' \u00d7 '+a},
  {q:'Proxima\u2019s light takes about 4 years to reach us. How many years for light to go there and back '+c+' times?',a:8*c,h:'4 + 4 = 8 for one round trip, \u00d7 '+c}])}},
 {id:'m12',lv:23,tp:'Multiplication',t:12,g:function(){return P([function(){var a=R(11,12),b=R(2,12);return{q:a+' \u00d7 '+b+' = ?',a:a*b,h:'('+b+' \u00d7 10) + ('+b+' \u00d7 '+(a-10)+')'}},function(){var a=R(2,9)*10,b=R(2,9);return{q:a+' \u00d7 '+b+' = ?',a:a*b,h:(a/10)+' \u00d7 '+b+', then add a zero.'}}])()}},
 {id:'logic3',lv:24,tp:'Logic',t:20,g:function(){var a=R(2,9),b=R(2,6),c=R(2,6);return P([{q:a+' + '+b+' \u00d7 '+c+' = ?',a:a+b*c,h:'Multiply first! '+b+' \u00d7 '+c+' = '+b*c},{q:a+' \u00d7 ('+b+' + '+c+') = ?',a:a*(b+c),h:'Parentheses first: '+(b+c)},{q:(b*c+a)+' \u2212 '+b+' \u00d7 '+c+' = ?',a:a,h:'Multiply first.'}])}}

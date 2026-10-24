@@ -93,3 +93,6 @@ button{font-family:inherit;color:#fff;border:0;cursor:pointer;touch-action:manip
 #map,#logbook,#badges,#parent{background:rgba(3,6,22,.96)}
 .ovh{padding-left:52px}
 @media (max-width:500px){#hud #hLog,#hud #gear,#hud #hMap{display:none}#fuelWrap{min-width:70px}.chip{padding:5px 7px}}
+
+#card{position:relative}#qsay{position:absolute;right:8px;top:6px;width:60px;height:60px;border-radius:30px;border:0;background:rgba(79,125,255,.35);font-size:30px;line-height:60px;padding:0;cursor:pointer;z-index:2}
+@media (max-height:500px){#qsay{width:48px;height:48px;font-size:24px;line-height:48px}}
