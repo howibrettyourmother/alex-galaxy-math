@@ -69,7 +69,7 @@ var SK=[
 {id:'word2',lv:15,tp:'Word Problems',t:22,g:function(){var a=R(3,6),b=R(2,5),c=R(2,9);return P([
  {q:a+' ships each carry '+b+' aliens. Then '+c+' more aliens arrive. How many aliens?',a:a*b+c,h:a+' \u00d7 '+b+' = '+a*b+', then + '+c},
  {q:a+' jets each drop '+b+' fireworks. Then '+c+' more go BOOM. How many fireworks?',a:a*b+c,h:a+' \u00d7 '+b+' = '+a*b+', then + '+c},
- {q:'A dino nest has '+b+' eggs. There are '+a+' nests. '+c+' eggs hatch. How many eggs are left?',a:a*b-c,h:a+' \u00d7 '+b+' = '+a*b+', then \u2212 '+c},
+ {q:'A dino nest has '+b+' eggs. There are '+a+' nests. '+Math.min(c,a*b-1)+' eggs hatch. How many eggs are left?',a:a*b-Math.min(c,a*b-1),h:a+' \u00d7 '+b+' = '+a*b+', then \u2212 '+Math.min(c,a*b-1)},
  {q:'You had '+(a*b+c)+' fuel cells. You used '+c+', then split the rest into '+a+' equal piles. How many in each pile?',a:b,h:'('+(a*b+c)+' \u2212 '+c+') \u00f7 '+a}])}},
 {id:'div10',lv:15,tp:'Division',t:9,g:function(){var b=R(3,10),q=R(2,10);return{q:(b*q)+' \u00f7 '+b+' = ?',a:q,h:'? \u00d7 '+b+' = '+b*q}}},
 {id:'change',lv:16,tp:'Money',t:16,g:function(){var p=5*R(3,19);return{q:'You pay $1 (100\u00a2) for a '+p+'\u00a2 space snack. How much change?',a:100-p,h:'Count up from '+p+' to 100.'}}},
@@ -87,5 +87,31 @@ var SK=[
  {q:c+' jet squadrons each have '+b+' jets. Each jet fires '+a+' rockets. How many rockets?',a:a*b*c,h:c+' \u00d7 '+b+' \u00d7 '+a},
  {q:'Proxima\u2019s light takes about 4 years to reach us. How many years for light to go there and back '+c+' times?',a:8*c,h:'4 + 4 = 8 for one round trip, \u00d7 '+c}])}},
 {id:'m12',lv:23,tp:'Multiplication',t:12,g:function(){return P([function(){var a=R(11,12),b=R(2,12);return{q:a+' \u00d7 '+b+' = ?',a:a*b,h:'('+b+' \u00d7 10) + ('+b+' \u00d7 '+(a-10)+')'}},function(){var a=R(2,9)*10,b=R(2,9);return{q:a+' \u00d7 '+b+' = ?',a:a*b,h:(a/10)+' \u00d7 '+b+', then add a zero.'}}])()}},
-{id:'logic3',lv:24,tp:'Logic',t:20,g:function(){var a=R(2,9),b=R(2,6),c=R(2,6);return P([{q:a+' + '+b+' \u00d7 '+c+' = ?',a:a+b*c,h:'Multiply first! '+b+' \u00d7 '+c+' = '+b*c},{q:a+' \u00d7 ('+b+' + '+c+') = ?',a:a*(b+c),h:'Parentheses first: '+(b+c)},{q:(b*c+a)+' \u2212 '+b+' \u00d7 '+c+' = ?',a:a,h:'Multiply first.'}])}}
+{id:'logic3',lv:24,tp:'Logic',t:20,g:function(){var a=R(2,9),b=R(2,6),c=R(2,6);return P([{q:a+' + '+b+' \u00d7 '+c+' = ?',a:a+b*c,h:'Multiply first! '+b+' \u00d7 '+c+' = '+b*c},{q:a+' \u00d7 ('+b+' + '+c+') = ?',a:a*(b+c),h:'Parentheses first: '+(b+c)},{q:(b*c+a)+' \u2212 '+b+' \u00d7 '+c+' = ?',a:a,h:'Multiply first.'}])}},
+// ---- levels 25-40: stretch zone (added Oct 2026) ----
+{id:'subZ',lv:25,tp:'Subtraction',t:22,g:function(){var a=P([300,400,500,600,700,800,900,1000]),b=R(112,a-101);return{q:fmt(a)+' \u2212 '+b+' = ?',a:a-b,h:'Trade across the zeros: '+fmt(a)+' is '+(a/100-1)+' hundreds, 9 tens, 10 ones.'}}},
+{id:'boxA',lv:25,tp:'Logic',t:14,g:function(){var a=R(12,48),c=R(a+15,99);return P([{q:'\u25a1 + '+a+' = '+c,a:c-a,h:c+' \u2212 '+a},{q:c+' \u2212 \u25a1 = '+a,a:c-a,h:c+' \u2212 '+a}])}},
+{id:'div12',lv:26,tp:'Division',t:10,g:function(){var b=R(6,12),q=R(3,12);return{q:(b*q)+' \u00f7 '+b+' = ?',a:q,h:'? \u00d7 '+b+' = '+b*q}}},
+{id:'boxM',lv:26,tp:'Multiplication',t:12,g:function(){var a=R(6,12),b=R(6,12);return P([{q:a+' \u00d7 \u25a1 = '+a*b,a:b,h:a*b+' \u00f7 '+a},{q:'\u25a1 \u00f7 '+a+' = '+b,a:a*b,h:a+' \u00d7 '+b}])}},
+{id:'word4',lv:27,tp:'Word Problems',t:30,g:function(){var a=R(3,6),b=R(4,9),c=R(5,15);return P([
+ {q:'A T. rex eats '+a+' meals a day for '+b+' days, then '+c+' more meals. How many meals?',a:a*b+c,h:a+' \u00d7 '+b+' = '+a*b+', then + '+c},
+ {q:a+' jets each fire '+b+' rockets. '+c+' rockets miss. How many hit?',a:a*b-c>0?a*b-c:a*b,h:a+' \u00d7 '+b+' = '+a*b+', then \u2212 '+c},
+ {q:'You have '+(a*b+c%a)+' space rocks. You make '+a+' equal piles and have '+(c%a)+' left over. How many in each pile?',a:b,h:'Take away '+(c%a)+', then split into '+a+'.'}])}},
+{id:'ops2',lv:28,tp:'Logic',t:20,g:function(){var a=R(3,9),b=R(2,9),c=R(2,6),d=R(2,6);return P([{q:a+' \u00d7 '+b+' \u2212 '+c+' \u00d7 '+d+' = ?',a:a*b-c*d,h:'Both \u00d7 first: '+a*b+' \u2212 '+c*d},{q:'('+a+' + '+b+') \u00d7 '+c+' \u2212 '+d+' = ?',a:(a+b)*c-d,h:'Parentheses, then \u00d7, then \u2212.'},{q:(c*d*2)+' \u00f7 '+c+' + '+a+' = ?',a:d*2+a,h:'\u00f7 first.'}].filter(function(x){return x.a>=0}))}},
+{id:'pv4',lv:29,tp:'Place Value',t:14,g:function(){var n=R(1000,9999),th=Math.floor(n/1000),hu=Math.floor(n/100)%10,te=Math.floor(n/10)%10,o=n%10;return P([{q:'Round '+n+' to the nearest hundred.',a:Math.round(n/100)*100,h:'Look at the tens digit: '+te},{q:'Round '+n+' to the nearest ten.',a:Math.round(n/10)*10,h:'Look at the ones digit: '+o},{q:th*1000+' + '+hu*100+' + '+te*10+' + '+o+' = ?',a:n,h:'Each number fills one place.'}])}},
+{id:'fadd',lv:30,tp:'Fractions',t:14,g:function(){var d=P([5,6,8,10]),a=R(1,d-3),b=R(1,d-a-1);return{q:a+'/'+d+' + '+b+'/'+d+' = ?',ch:mc((a+b)+'/'+d,[(a+b)+'/'+(2*d),(a*b)+'/'+d,(a+b+1)+'/'+d]),a:(a+b)+'/'+d,h:'Same size pieces: add the tops.'}}},
+{id:'fofN',lv:30,tp:'Fractions',t:16,g:function(){var d=P([3,4,5]),n=R(2,d-1),k=R(2,9);return{q:n+'/'+d+' of '+d*k+' = ?',a:n*k,h:'1/'+d+' of '+d*k+' is '+k+', times '+n}}},
+{id:'seq2',lv:31,tp:'Patterns',t:18,g:function(){var t=R(0,3),s;if(t===0){var a=R(1,3);s=[a*a,(a+1)*(a+1),(a+2)*(a+2),(a+3)*(a+3),(a+4)*(a+4)]}else if(t===1){var x=R(1,3),y=R(1,4);s=[x,y,x+y,x+2*y,2*x+3*y]}else if(t===2){var b=R(1,9);s=[b,b+2,b+5,b+9,b+14]}else{var c=R(2,4);s=[c,c*3,c*9,c*27,c*81]}return{q:s.slice(0,4).join(', ')+', ?',a:s[4],h:'Look at how the jumps change.'}}},
+{id:'m2x2',lv:32,tp:'Multiplication',t:25,g:function(){var a=R(11,19),b=R(11,15);return{q:a+' \u00d7 '+b+' = ?',a:a*b,h:'('+a+' \u00d7 10) + ('+a+' \u00d7 '+(b-10)+')'}}},
+{id:'ldiv',lv:33,tp:'Division',t:25,g:function(){var b=R(3,9),q=R(21,99);return{q:(b*q)+' \u00f7 '+b+' = ?',a:q,h:'Split it: tens first, then ones.'}}},
+{id:'box2',lv:34,tp:'Logic',t:22,g:function(){var a=R(3,9),x=R(3,12),b=R(2,20);return P([{q:a+' \u00d7 \u25a1 + '+b+' = '+(a*x+b),a:x,h:'Undo + '+b+' first, then \u00f7 '+a},{q:'\u25a1 \u00f7 '+a+' \u2212 '+b%9+' = '+(x-b%9),a:a*x,h:'Undo \u2212, then \u00d7 '+a}])}},
+{id:'sub4',lv:35,tp:'Subtraction',t:28,g:function(){var a=R(4000,9800),b=R(1205,a-500);return{q:fmt(a)+' \u2212 '+fmt(b)+' = ?',a:a-b,h:'Ones, tens, hundreds, thousands. Trade when you need to.'}}},
+{id:'word5',lv:36,tp:'Word Problems',t:35,g:function(){var a=R(4,9),b=2*R(2,4),c=R(2,5);return P([
+ {q:'A squadron has '+a+' jets. Each jet has '+b+' rockets. They fire half of them. How many are left?',a:a*b/2,h:'Total '+a*b+', then half.'},
+ {q:'Dino eggs: '+c+' nests with '+a+' eggs, and '+c+' nests with '+b+' eggs. How many eggs?',a:c*(a+b),h:c+' \u00d7 ('+a+' + '+b+')'},
+ {q:a*b+' KABOOM rocks. Jets blast '+b+' at a time. After '+c+' blasts, how many are left?',a:a*b-b*Math.min(c,a),h:(b*Math.min(c,a))+' blasted'}].filter(function(x){return x.q.indexOf('blasts')<0||c<=a}))}},
+{id:'ops3',lv:37,tp:'Logic',t:25,g:function(){var a=R(2,6),b=R(2,6),c=R(2,9),d=R(2,5);return P([{q:'('+a+' + '+b+') \u00d7 ('+c+' \u2212 '+(c-d)+') = ?',a:(a+b)*d,h:'Both parentheses first.'},{q:a+' \u00d7 '+b+' \u00d7 '+d+' = ?',a:a*b*d,h:'Two at a time.'},{q:'10 \u00d7 10 \u00d7 '+a+' = ?',a:100*a,h:'10 \u00d7 10 = 100'}])}},
+{id:'m3x1',lv:38,tp:'Multiplication',t:28,g:function(){var a=R(102,489),b=R(3,9);return{q:a+' \u00d7 '+b+' = ?',a:a*b,h:'Hundreds, tens, ones \u2014 multiply each, then add.'}}},
+{id:'fcmp2',lv:39,tp:'Fractions',t:18,g:function(){var o=P([['2/3','3/5'],['3/4','2/3'],['5/8','1/2'],['4/5','3/4'],['5/6','4/5']]);return{q:'Which is BIGGER?',ch:shuf(o.slice()),a:o[0],h:'Think how much is missing from a whole.'}}},
+{id:'boss',lv:40,tp:'Logic',t:40,g:function(){var x=R(3,9),a=R(2,6),b=R(2,9);return P([{q:'\u25a1 \u00d7 \u25a1 = '+x*x,a:x,h:'Which number times itself?'},{q:'('+a+' \u00d7 \u25a1) \u2212 '+b+' = '+(a*x-b),a:x,h:'Undo \u2212'+b+', then \u00f7 '+a},{q:fmt(1000*a+x)+' \u2212 '+fmt(999)+' = ?',a:1000*a+x-999,h:'\u2212 1000, then + 1'}])}},
 ];

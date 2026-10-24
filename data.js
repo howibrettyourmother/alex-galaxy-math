@@ -18,7 +18,7 @@ var DEST=[
 {id:'betelgeuse',name:'Betelgeuse',lv:21,c1:'#ffb27a',c2:'#d02a10',glow:'#ff5a1a',real:1,facts:['Betelgeuse is a red supergiant star in Orion\u2019s shoulder.','If it sat where our Sun is, it would swallow the orbits of Mercury, Venus, Earth, and Mars!','Someday it will explode as a supernova.'],src:'NASA (2024); NASA JPL Night Sky'},
 {id:'sgra',name:'Sagittarius A*',lv:23,c1:'#000',c2:'#000',bh:1,real:1,facts:['Sagittarius A* is the giant black hole at the center of our Milky Way galaxy.','It is about 4 million times heavier than our Sun!','Scientists showed the first picture of it in 2022, using telescopes all around the Earth.'],src:'Event Horizon Telescope; NASA JPL'}
 ];
-var RANKS=[[1,'Space Cadet'],[4,'Rocket Rookie'],[7,'Star Pilot'],[10,'Asteroid Ace'],[13,'Comet Captain'],[16,'Galaxy Commander'],[19,'Nebula Admiral'],[22,'Black Hole Legend']];
+var RANKS=[[1,'Space Cadet'],[4,'Rocket Rookie'],[7,'Star Pilot'],[10,'Asteroid Ace'],[13,'Comet Captain'],[16,'Galaxy Ranger'],[19,'Nebula Admiral'],[22,'Black Hole Legend'],[26,'Quasar Marshal'],[30,'Supernova General'],[34,'Wormhole Warden'],[38,'Galactic Commander']];
 var BADGES=[
 ['first','\ud83d\ude80','First Blast','Answer your first problem'],
 ['s5','\ud83d\udd25','Hot Streak','5 in a row'],['s10','\ud83c\udf86','Supernova Streak','10 in a row'],['s20','\ud83c\udf1f','Unstoppable','20 in a row'],
@@ -26,6 +26,6 @@ var BADGES=[
 ['blast25','\u2604\ufe0f','Rock Smasher','Blast 25 asteroids & aliens'],['blast100','\ud83d\udca5','Mega Smasher','Blast 100'],
 ['back5','\ud83d\udcaa','Never Give Up','Get 5 right just after a miss'],
 ['facts8','\ud83d\udcd6','Space Scientist','Collect 8 logbook cards'],['factsAll','\ud83c\udf93','Galaxy Professor','Collect every card'],
-['blitz15','\u26a1','Blitz Pilot','Score 15 in Blitz'],['master3','\ud83c\udfc5','Triple Master','Master 3 math topics']
+['lv30','\ud83d\udca5','Supernova','Reach level 30'],['lv40','\ud83d\udc51','Galactic Commander','Reach level 40'],['deep25','\ud83c\udf0c','Deep Diver','Reach depth 25 in Deep Space'],['deep60','\ud83d\udd73\ufe0f','Abyss Explorer','Reach depth 60 in Deep Space'],['blitz15','\u26a1','Blitz Pilot','Score 15 in Blitz'],['master3','\ud83c\udfc5','Triple Master','Master 3 math topics']
 ];
 var TOPICS=['Addition','Subtraction','Place Value','Skip Counting','Multiplication','Division','Fractions','Money','Time','Patterns','Logic','Word Problems'];

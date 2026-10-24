@@ -7,15 +7,15 @@
 <meta name="description" content="Pilot a starship, blast asteroids with math, warp to real planets and stars, and collect space facts.">
 <meta property="og:title" content="Alex's Galaxy Math 🚀"><meta property="og:image" content="https://howibrettyourmother.github.io/alex-galaxy-math/og.png">
 <link rel="manifest" href="manifest.json"><link rel="icon" href="favicon-32.png"><link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="stylesheet" href="game.css?v=1.1.0">
+<link rel="stylesheet" href="game.css?v=1.2.0">
 </head><body>
 <canvas id="sky"></canvas>
 <div id="hud" class="hide"><span class="chip" id="rank"></span><div id="fuelWrap"><div id="fuel"></div><span>WARP FUEL</span></div><span class="chip" id="streak"></span><span class="chip hide" id="timer"></span><span class="sp"></span><button class="ib" id="hMap" aria-label="map">🗺️</button><button class="ib" id="hLog" aria-label="logbook">📖</button><button class="ib" id="hBack" aria-label="menu">⏸</button><button class="ib" id="gear" aria-label="parent">⚙️</button></div>
 <div id="game" class="hide"><div id="panel"><div id="card"><div id="qtop"></div><div id="qtext"></div><div id="qvis"></div><div id="ansBox"></div><div id="pad"></div><div id="fb" class="hide"></div></div></div></div>
 <div id="title" class="ov"><div id="logo">GALAXY MATH</div><div id="sub">Solve problems to fuel your starship. Explore the galaxy, Captain Alex!</div>
-<div class="row"><button class="big" id="bPlay">🚀 LAUNCH</button><button class="big blue" id="bBlitz">⚡ BLITZ <small style="font-size:14px">90 sec</small></button></div>
+<div class="row"><button class="big" id="bPlay">🚀 LAUNCH</button><button class="big blue" id="bBlitz">⚡ BLITZ <small style="font-size:14px">90 sec</small></button><button class="big" id="bDeep" style="background:linear-gradient(#8a4dff,#4b1fb0);box-shadow:0 6px 0 #2a0f70">🌌 DEEP SPACE <small style="font-size:14px">endless</small></button></div>
 <div class="row"><button class="big blue" id="bMap" style="font-size:20px">🗺️ Galaxy Map</button><button class="big blue" id="bLog" style="font-size:20px">📖 Logbook</button><button class="big blue" id="bBadge" style="font-size:20px">🏅 Badges</button></div>
-<div id="tlv" style="margin-top:12px;color:#ffd76a;font-weight:800"></div><button class="ib" id="gear2" aria-label="parent" style="position:absolute;right:calc(14px + env(safe-area-inset-right));top:calc(12px + env(safe-area-inset-top))">⚙️</button></div>
+<div id="tlv" style="margin-top:12px;color:#ffd76a;font-weight:800"></div><div id="ladder"></div><button class="ib" id="gear2" aria-label="parent" style="position:absolute;right:calc(14px + env(safe-area-inset-right));top:calc(12px + env(safe-area-inset-top))">⚙️</button></div>
 <div id="map" class="ov hide"><div class="ovh"><h2>🗺️ Galaxy Map</h2><button class="x" data-c="map">✕</button></div><div id="mapBox"></div></div>
 <div id="logbook" class="ov hide"><div class="ovh"><h2>📖 Space Logbook</h2><button class="x" data-c="logbook">✕</button></div><div id="logList"></div></div>
 <div id="badges" class="ov hide"><div class="ovh"><h2>🏅 Badges</h2><button class="x" data-c="badges">✕</button></div><div id="badgeList" style="text-align:center"></div></div>
@@ -23,7 +23,7 @@
 <div id="fact" class="ov hide" style="z-index:25"><div id="factCard"></div></div>
 <div id="gate" class="hide">Grown-ups: keep holding…<div id="gateBar"><div></div></div></div>
 <div id="banner"></div>
-<script src="data.js?v=1.1.0"></script><script src="skills.js?v=1.1.0"></script><script src="voice.js?v=1.1.0"></script><script src="fx.js?v=1.1.0"></script><script src="game.js?v=1.1.0"></script>
+<script src="data.js?v=1.2.0"></script><script src="skills.js?v=1.2.0"></script><script src="voice.js?v=1.2.0"></script><script src="fx.js?v=1.2.0"></script><script src="game.js?v=1.2.0"></script>
 <script>/*hub-home*/(function(){var own='alex',k;try{k=localStorage.kidsHub}catch(e){}if(k!=='zoe'&&k!=='alex')k=own;
 var u=k==='zoe'?'/doodle-and-zoe/':'/alex-games/',b=document.createElement('div');b.id='hubHome';b.setAttribute('role','button');b.setAttribute('aria-label','hold to go home');
 b.innerHTML='<svg width="38" height="38" viewBox="0 0 38 38" style="position:absolute;left:0;top:0;pointer-events:none"><circle cx="19" cy="19" r="16" fill="none" stroke="#ffd54a" stroke-width="4" stroke-linecap="round" stroke-dasharray="100.5" stroke-dashoffset="100.5" transform="rotate(-90 19 19)"/></svg><span style="position:relative;pointer-events:none">🏠</span>';

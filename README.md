@@ -4,7 +4,8 @@ An adaptive "explore the galaxy" math game for Alex. Every correct answer adds w
 
 Live: https://howibrettyourmother.github.io/alex-galaxy-math/ (also a tile in [Alex's hub](https://howibrettyourmother.github.io/alex-games/))
 
-- 45 skills across 12 topics, levels 1–24. Level 1 is addition within 10; level 24 is order of operations and logic.
+- 64 skills, levels 1–40, with ranks from Space Cadet to Galactic Commander. Level 1 is addition within 10; levels 25–40 add subtracting across zeros, missing-number equations, division to 12, multi-step word problems, rounding, fraction adding/comparing, patterns, 2-digit×2-digit, long division and order of operations.
+- Adaptive: 5 right in a row warps up a level; misses ease off gently. **Deep Space** is an endless mode that keeps getting harder and saves a personal-best depth.
 - Adaptive: a correct answer adds +0.3, plus a speed bonus and a streak bonus. A miss subtracts 0.45 and eases back to easier skills. Topics that need practice get extra weight.
 - Parent view: hold the ⚙️ gear for 1.5 seconds.
 - Blitz mode (90 s) is optional. The normal game has no timers.
@@ -32,5 +33,5 @@ Each real fact was checked against NASA or other reputable sources. "Space Legen
 Word-problem space numbers (level 11): 6 crewed Apollo landings × 2 moonwalkers = 12; Jupiter day ≈ 10 h; sunlight ≈ 8 min; New Horizons at Pluto 2015 and Arrokoth 2019; Mars has 2 moons; Olympus Mons ≈ 3× Everest.
 
 ## New in 1.1 (Oct 2026)
-- 🔊 **Questions are read aloud** in a natural recorded voice (Piper "ryan" clips in `voice/`, stitched from phrase + number clips by `voice.js`). Word problems read themselves; tap 🔊 to hear any question. Regenerate with `bash src/genvoice.sh` after editing questions in `skills.js`.
+- 🔊 **Questions are read aloud** in a natural recorded voice (Piper "ryan" clips in `voice/`, stitched from phrase + number clips by `voice.js`). Nothing is read automatically; tap 🔊 to hear a question. Regenerate with `bash src/genvoice.sh` after editing questions in `skills.js`.
 - 🦖✈️💥 **Dinos, jets and bigger explosions:** T. rex and fighter-jet targets show up on every planet, kills now blow up with shockwave rings, debris and a bigger shake, a wingman jet strafes the target every 3-answer streak, and new T. rex / jet / KABOOM word problems at levels 7, 11, 15 and 22.

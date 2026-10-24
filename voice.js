@@ -3,7 +3,7 @@
 (function(G){
 var EMN={'\ud83d\ude80':' rocket ','\ud83d\udc7d':' alien ','\u2b50':' star ','\ud83c\udf19':' moon ','\u2604\ufe0f':' comet ','\ud83e\ude90':' planet ','\ud83e\udd96':' T. rex ','\u2708\ufe0f':' jet '};
 var ONES=['zero','one','two','three','four','five','six','seven','eight','nine'];
-function norm(t){t=t.replace(/(^|\s)\?(?=\s|$)/g,'$1what');Object.keys(EMN).forEach(function(e){t=t.split(e).join(EMN[e])});
+function norm(t){t=t.replace(/\u25a1/g,'?');t=t.replace(/(^|\s)\?(?=\s|$)/g,'$1what');Object.keys(EMN).forEach(function(e){t=t.split(e).join(EMN[e])});
  t=t.replace(/\+/g,' plus ').replace(/\u2212/g,' minus ').replace(/\u00d7/g,' times ').replace(/\u00f7/g,' divided by ').replace(/=/g,' equals ').replace(/\u25a2/g,' compared to ')
   .replace(/\u00a2/g,' cents ').replace(/\$/g,' ').replace(/\//g,' over ').replace(/[(),:\u2019']/g,function(c){return c==='\u2019'||c==="'"?"'":' '}).replace(/\bR\s*\?/g,' remainder what ')
   .replace(/\s+/g,' ').trim();

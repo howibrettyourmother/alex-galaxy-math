@@ -2,7 +2,7 @@
 (function(){
 var $=function(i){return document.getElementById(i)};
 var KEY='alexGalaxyMath.v1';
-function fresh(){return{L:3,maxL:3,at:0,streak:0,best:0,total:0,correct:0,blasts:0,back:0,tp:{},recent:[],log:[],badges:[],sessions:[],blitzBest:0,start:3}}
+function fresh(){return{L:3,maxL:3,at:0,streak:0,best:0,total:0,correct:0,blasts:0,back:0,tp:{},recent:[],log:[],badges:[],sessions:[],blitzBest:0,deepBest:0,start:3}}
 var S;try{S=JSON.parse(localStorage.getItem(KEY))||fresh()}catch(e){S=fresh()}
 var F=fresh();for(var k in F)if(S[k]===undefined)S[k]=F[k];
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
@@ -39,8 +39,9 @@ function tap(el,fn){var last=0;function go(e){e.preventDefault();var n=Date.now(
 function T(n){if(!S.tp[n])S.tp[n]={n:0,c:0,last:[],hi:0};return S.tp[n]}
 function tStatus(t){if(!t||t.n===0)return'new';var l=t.last.slice(-10),a=l.filter(Boolean).length/l.length;if(t.n>=8&&l.length>=8&&a>=.8)return'mastered';if(l.length>=5&&a<.6)return'struggling';return'working'}
 // ---------- adaptive engine ----------
-var cur=null,curSk=null,lastSk=null,ease=false,missRow=0,qStart=0,typed='',busy=false,blitz=false,bEnd=0,bScore=0,sess=null;
-function pickSkill(){var L=lvl(),pool=SK.filter(function(s){return s.lv<=L});
+var cur=null,curSk=null,lastSk=null,ease=false,missRow=0,qStart=0,typed='',busy=false,blitz=false,deep=false,dDepth=0,dStart=1,bEnd=0,bScore=0,sess=null;
+function deepL(){return Math.min(40,dStart+Math.floor(dDepth/2))}
+function pickSkill(){var L=deep?deepL():lvl(),pool=SK.filter(function(s){return s.lv<=L});
  if(ease){var e=pool.filter(function(s){return s.lv<=Math.max(1,L-2)});if(e.length)pool=e}
  var w=pool.map(function(s){var d=L-s.lv,x=d<=1?5:d<=3?3:d<=6?1.2:.4;if(tStatus(S.tp[s.tp])==='struggling')x*=1.6;if(s===lastSk)x*=.25;return x});
  var tot=w.reduce(function(a,b){return a+b},0),r=Math.random()*tot;for(var i=0;i<pool.length;i++){r-=w[i];if(r<=0)return pool[i]}return pool[pool.length-1]}
@@ -48,15 +49,16 @@ function grade(ok,ms){var s=curSk,t=T(s.tp),before=lvl(),fast=ms<s.t*1000;S.tota
  S.recent.push({ok:ok?1:0,ms:Math.round(ms),lv:s.lv,tp:s.tp,d:Date.now()});if(S.recent.length>100)S.recent.shift();
  if(sess){sess.n++;if(ok)sess.c++;sess.end=lvl()}
  if(ok){S.correct++;t.c++;if(s.lv>t.hi)t.hi=s.lv;S.streak++;if(S.streak>S.best)S.best=S.streak;if(missRow>0){S.back++}missRow=0;ease=false;
-  S.L+=0.3+(fast?0.25:0)+(S.streak>=3?0.1:0)}
- else{S.streak=0;missRow++;S.L-=0.45+(missRow>=2?0.3:0);ease=true}
- S.L=Math.max(1,Math.min(24.99,S.L));if(lvl()>S.maxL)S.maxL=lvl();if(sess)sess.end=lvl();
+  S.L+=0.3+(fast?0.25:0)+(S.streak>=3?0.15:0);if(S.streak>0&&S.streak%5===0)S.L=Math.floor(S.L)+1.05;// 5 in a row = warp jump up a level
+  if(deep){dDepth++;if(dDepth>S.deepBest)S.deepBest=dDepth}}
+ else{S.streak=0;missRow++;S.L-=0.3+(missRow>=2?0.25:0);ease=missRow>=2}
+ S.L=Math.max(1,Math.min(40.99,S.L));if(lvl()>S.maxL)S.maxL=lvl();if(sess)sess.end=lvl();
  badgeCheck();save();return lvl()-before}
 function newQ(){curSk=pickSkill();lastSk=curSk;cur=curSk.g();typed='';qStart=performance.now();busy=false;renderQ()}
 // ---------- question UI ----------
 function renderQ(){var c=cur;$('qtop').textContent=curSk.tp+' \u2022 Level '+lvl();var q=$('qtext');q.innerHTML=String(c.q).replace(/\n/g,'<br>');q.className=String(c.q).length>34?'long':'';
  $('qvis').innerHTML=c.vis||'';var sp=$('qsay');if(!sp){sp=document.createElement('button');sp.id='qsay';sp.setAttribute('aria-label','Read it to me');sp.textContent='\ud83d\udd0a';$('card').appendChild(sp);tap(sp,function(){unlock();speakQ(cur.q)})}
- if(/[a-z]{3}/i.test(String(c.q)))setTimeout(function(){if(cur===c)speakQ(c.q)},250);else hush();var pad=$('pad');pad.innerHTML='';hide('fb');$('card').className='';
+ hush();// read only when 🔊 is tappedvar pad=$('pad');pad.innerHTML='';hide('fb');$('card').className='';
  if(c.ch){hide('ansBox');c.ch.forEach(function(v){var b=document.createElement('button');b.className='k mc'+(c.em?' em':'');b.textContent=v;tap(b,function(){if(busy)return;sfx('tap',.5);answer(v===String(c.a))});pad.appendChild(b)})}
  else{show('ansBox');$('ansBox').textContent='';['1','2','3','4','5','6','7','8','9','\u232b','0','GO'].forEach(function(v){var b=document.createElement('button');b.className='k'+(v==='GO'?' go':v==='\u232b'?' del':'');b.textContent=v;
   b.addEventListener('pointerdown',function(e){e.preventDefault();if(busy)return;b.classList.add('pr');setTimeout(function(){b.classList.remove('pr')},120);key(v)});pad.appendChild(b)})}}
@@ -66,19 +68,20 @@ document.addEventListener('keydown',function(e){if($('game').classList.contains(
 function answer(ok){if(busy)return;busy=true;hush();var ms=performance.now()-qStart,up=grade(ok,ms);
  if(ok){$('card').className='good';FX.shoot();if(S.streak>=3&&S.streak%3===0&&FX.jet)FX.jet();sfx('zap');if(blitz)bScore++;
   var fe=[5,10,15,20,25,30,40,50];if(fe.indexOf(S.streak)>=0){setTimeout(function(){FX.fireworks(S.streak>=10?10:6);sfx('firework');banner(S.streak+' IN A ROW!',S.streak>=10?'SUPERNOVA!':'Hot streak!')},500)}
-  if(up>0){setTimeout(function(){sfx('levelup');banner('LEVEL '+lvl()+'!',rank(lvl()));FX.fireworks(4)},S.streak%5===0?1500:400)}
+  if(up>0){setTimeout(function(){sfx('levelup');banner((up>1||S.streak%5===0?'WARP JUMP! ':'')+'LEVEL '+lvl()+'!',rank(lvl()));FX.fireworks(4)},S.streak%5===0?1500:400)}
+  if(deep&&dDepth%10===0)setTimeout(function(){banner('DEPTH '+dDepth+'!',dDepth>=S.deepBest?'New record!':'Deeper!')},900);
   hud();setTimeout(function(){if(!FX.warping)newQ()},650)}
  else{sfx('miss');FX.enemyShot();hud();var fb=$('fb');show('fb');
   fb.innerHTML='<h2>'+P(['Almost!','So close!','Nice try, pilot!','Shields up!'])+'</h2><p>The answer is <span style="color:#7dffb0">'+(typeof cur.a==='number'?fmt(cur.a):cur.a)+'</span></p><p class="hint">'+(cur.h||'')+'</p><button class="big blue" id="fbGo">Keep flying \u2794</button>';
   tap($('fbGo'),function(){sfx('tap',.5);newQ()})}}
 // ---------- HUD / banner ----------
-function hud(){$('rank').textContent=rank(lvl())+' \u2022 Lv '+lvl();$('fuel').style.width=(FX.fuel/5*100)+'%';$('streak').textContent='\ud83d\udd25 '+S.streak;$('streak').style.visibility=S.streak>=2?'visible':'hidden'}
+function hud(){if(deep){$('timer').textContent='\ud83c\udf0c Depth '+dDepth+' \u2022 Best '+S.deepBest}$('rank').textContent=rank(lvl())+' \u2022 Lv '+lvl();$('fuel').style.width=(FX.fuel/5*100)+'%';$('streak').textContent='\ud83d\udd25 '+S.streak;$('streak').style.visibility=S.streak>=2?'visible':'hidden'}
 var bT=0;function banner(a,b){var el=$('banner');el.innerHTML=a+(b?'<small>'+b+'</small>':'');el.classList.add('on');clearTimeout(bT);bT=setTimeout(function(){el.classList.remove('on')},1800)}
 // ---------- badges ----------
 function give(id){if(S.badges.indexOf(id)>=0)return;S.badges.push(id);var b=BADGES.filter(function(x){return x[0]===id})[0];setTimeout(function(){banner(b[1]+' '+b[2],'New badge!');sfx('ding')},1100)}
 function badgeCheck(){if(S.correct>=1)give('first');if(S.best>=5)give('s5');if(S.best>=10)give('s10');if(S.best>=20)give('s20');
- [5,10,15,20,24].forEach(function(l){if(S.maxL>=l)give('lv'+l)});if(S.blasts>=25)give('blast25');if(S.blasts>=100)give('blast100');if(S.back>=5)give('back5');
- if(S.log.length>=8)give('facts8');if(S.log.length>=DEST.length)give('factsAll');if(S.blitzBest>=15)give('blitz15');
+ [5,10,15,20,24,30,40].forEach(function(l){if(S.maxL>=l)give('lv'+l)});if(S.blasts>=25)give('blast25');if(S.blasts>=100)give('blast100');if(S.back>=5)give('back5');
+ if(S.log.length>=8)give('facts8');if(S.log.length>=DEST.length)give('factsAll');if(S.blitzBest>=15)give('blitz15');if(S.deepBest>=25)give('deep25');if(S.deepBest>=60)give('deep60');
  if(TOPICS.filter(function(t){return tStatus(S.tp[t])==='mastered'}).length>=3)give('master3')}
 // ---------- arrivals / fact cards ----------
 function logDest(i){var id=DEST[i].id;if(S.log.indexOf(id)<0){S.log.push(id);badgeCheck();save();return true}return false}
@@ -88,13 +91,13 @@ function factCard(i,isNew,then){var d=DEST[i];$('factCard').innerHTML=planet(d,1
  show('fact');sfx('ding');tap($('fcGo'),function(){sfx('tap',.5);hide('fact');if(then)then()})}
 function onWarpDone(){var tgt=destIdx(lvl());if(tgt>S.at){S.at++;FX.setDest(S.at);var n=logDest(S.at);save();banner('ARRIVED!',DEST[S.at].name);setTimeout(function(){factCard(S.at,n,function(){newQ()})},900)}else{FX.setDest(S.at);newQ()}}
 // ---------- screens ----------
-function start(b){blitz=b;unlock();hide('title');show('game');show('hud');sess={d:Date.now(),n:0,c:0,startL:lvl(),end:lvl(),blitz:b?1:0};S.sessions.push(sess);if(S.sessions.length>30)S.sessions.shift();
- FX.setDest(S.at);hud();if(b){bEnd=Date.now()+90000;bScore=0;show('timer');tick()}else hide('timer');
+function start(b,dp){blitz=!!b;deep=!!dp;dDepth=0;dStart=Math.max(1,lvl()-1);unlock();hide('title');show('game');show('hud');sess={d:Date.now(),n:0,c:0,startL:lvl(),end:lvl(),blitz:b?1:0};S.sessions.push(sess);if(S.sessions.length>30)S.sessions.shift();
+ FX.setDest(S.at);hud();if(b){bEnd=Date.now()+90000;bScore=0;show('timer');tick()}else if(deep){show('timer')}else hide('timer');
  if(S.log.indexOf(DEST[S.at].id)<0){logDest(S.at);factCard(S.at,true,newQ)}else newQ()}
 function tick(){if(!blitz)return;var r=Math.max(0,Math.ceil((bEnd-Date.now())/1000));$('timer').textContent='\u23f1 '+r;if(r<=0){endBlitz();return}setTimeout(tick,250)}
 function endBlitz(){blitz=false;busy=true;if(bScore>S.blitzBest)S.blitzBest=bScore;badgeCheck();save();hide('timer');FX.fireworks(8);sfx('firework');
  var fb=$('fb');show('fb');fb.innerHTML='<h2>\u26a1 Blitz over!</h2><p>You blasted '+bScore+' problems!</p><p class="hint">Best: '+S.blitzBest+'</p><button class="big green" id="fbGo">Keep exploring</button>';tap($('fbGo'),function(){newQ()})}
-function toTitle(){hide('game');hide('hud');show('title');blitz=false;$('tlv').textContent=rank(lvl())+' \u2022 Level '+lvl()+' \u2022 '+DEST[S.at].name}
+function toTitle(){hide('game');hide('hud');show('title');blitz=false;deep=false;ladder();$('tlv').textContent=rank(lvl())+' \u2022 Level '+lvl()+' \u2022 '+DEST[S.at].name}
 // map
 function openMap(){show('map');var box=$('mapBox'),W=box.clientWidth,H=box.clientHeight,por=H>W,cols=por?2:4,rows=Math.ceil(DEST.length/cols),pts=[];
  var html='';DEST.forEach(function(d,i){var r=Math.floor(i/cols),c=i%cols;if(r%2)c=cols-1-c;var x=(c+.5)/cols*W,y=(r+.5)/rows*H;pts.push(x+','+y);
@@ -116,14 +119,14 @@ function openParent(){show('parent');var r20=S.recent.slice(-20),r100=S.recent,a
  var m=TOPICS.filter(function(t){return tStatus(S.tp[t])==='mastered'}),sg=TOPICS.filter(function(t){return tStatus(S.tp[t])==='struggling'});
  $('parentBody').innerHTML='<div><span class="stat">Level now<b>'+lvl()+' <small style="font-size:13px">('+S.L.toFixed(1)+')</small></b></span><span class="stat">Highest level<b>'+S.maxL+'</b></span><span class="stat">Rank<b style="font-size:16px">'+rank(lvl())+'</b></span><span class="stat">Last 20 accuracy<b>'+pct(r20)+'</b></span><span class="stat">Last 100<b>'+pct(r100)+'</b></span><span class="stat">Avg time (last 20)<b>'+avg+'</b></span><span class="stat">Problems total<b>'+S.total+'</b></span><span class="stat">Best streak<b>'+S.best+'</b></span><span class="stat">Blitz best<b>'+S.blitzBest+'</b></span></div>'+
  '<p><b>Mastered:</b> '+(m.join(', ')||'none yet')+'<br><b>Needs practice:</b> '+(sg.join(', ')||'nothing flagged')+'</p>'+
- '<p style="color:#556">Level guide: 1\u20133 facts to 20 \u2022 4\u20139 place value, 2-digit +/\u2212 with regrouping, coins, clocks, skip counting \u2022 10\u201314 3-digit +/\u2212, early \u00d7/\u00f7, fractions, logic \u2022 15\u201319 \u00d7/\u00f7 facts, change, elapsed time, 2-digit\u00d71-digit \u2022 20\u201324 4-digit, remainders, equivalent fractions, order of operations. 1st grade \u2248 levels 1\u20136.</p>'+
+ '<p style="color:#556">Level guide: 1\u20133 facts to 20 \u2022 4\u20139 place value, 2-digit +/\u2212 with regrouping, coins, clocks, skip counting \u2022 10\u201314 3-digit +/\u2212, early \u00d7/\u00f7, fractions, logic \u2022 15\u201319 \u00d7/\u00f7 facts, change, elapsed time, 2-digit\u00d71-digit \u2022 20\u201324 4-digit, remainders, equivalent fractions, order of operations \u2022 25\u201340 subtracting across zeros, missing numbers (\u25a1), \u00f7 to 12, multi-step word problems, rounding & place value, adding fractions, number patterns, 2-digit\u00d72-digit, long division, two-step \u25a1 equations, 4-digit subtraction, 3-digit\u00d71-digit, comparing fractions, boss mix. 5 right in a row jumps a level; misses ease off gently. Deep Space is endless and keeps a best depth. 1st grade \u2248 levels 1\u20136.</p>'+
  '<h3>Topics</h3><table><tr><th>Topic</th><th>Tries</th><th>Last 10</th><th>Hardest</th><th>Status</th></tr>'+rows+'</table>'+
  '<h3>Recent sessions</h3><table><tr><th>When</th><th>Problems</th><th>Accuracy</th><th>Level</th></tr>'+(ses||'<tr><td colspan=4>None yet</td></tr>')+'</table>'+
  '<h3>Settings</h3><div>Set level: <button class="pb" id="pDn">\u2212</button> <b id="pLv">'+lvl()+'</b> <button class="pb" id="pUp">+</button> <button class="pb red" id="pReset">Reset all progress</button></div><p style="color:#778;font-size:12px">Saved on this device only (localStorage). Adaptation: +level for right answers (more if quick), gentle step back and easier review after a miss. No timers except optional Blitz.</p>';
- function setL(v){S.L=Math.max(1,Math.min(24,v));if(lvl()>S.maxL)S.maxL=lvl();S.at=Math.min(S.at,destIdx(lvl()));if(destIdx(lvl())>S.at)S.at=destIdx(lvl());FX.setDest(S.at);save();openParent();hud()}
+ function setL(v){S.L=Math.max(1,Math.min(40,v));if(lvl()>S.maxL)S.maxL=lvl();S.at=Math.min(S.at,destIdx(lvl()));if(destIdx(lvl())>S.at)S.at=destIdx(lvl());FX.setDest(S.at);save();openParent();hud()}
  tap($('pDn'),function(){setL(lvl()-1)});tap($('pUp'),function(){setL(lvl()+1)});tap($('pReset'),function(){if(confirm('Reset all of Alex\u2019s progress?')){S=fresh();save();openParent();hud()}})}
 // ---------- wire up ----------
-tap($('bPlay'),function(){sfx('tap');start(false)});tap($('bBlitz'),function(){sfx('tap');start(true)});
+tap($('bPlay'),function(){sfx('tap');start(false)});tap($('bBlitz'),function(){sfx('tap');start(true)});tap($('bDeep'),function(){sfx('tap');start(false,true)});
 tap($('bMap'),function(){sfx('tap',.5);openMap()});tap($('bLog'),function(){sfx('tap',.5);openLog()});tap($('bBadge'),function(){sfx('tap',.5);openBadges()});
 tap($('hMap'),function(){sfx('tap',.5);openMap()});tap($('hLog'),function(){sfx('tap',.5);openLog()});tap($('hBack'),function(){sfx('tap',.5);toTitle()});
 Array.prototype.forEach.call(document.querySelectorAll('.x'),function(x){tap(x,function(){sfx('tap',.4);hide(x.getAttribute('data-c'))})});
@@ -134,4 +137,9 @@ function hubSave(){try{S.fuel=FX.fuel||0}catch(e){}save()}window.hubSave=hubSave
 FX.setDest(S.at);toTitle();
 window.__M={S:function(){return S},grade:function(ok,ms){if(!curSk)curSk=pickSkill();var r=grade(ok,ms);curSk=pickSkill();return{L:S.L,lvl:lvl(),skill:curSk.id,skLv:curSk.lv}},newQ:newQ,cur:function(){return{q:cur.q,a:cur.a,sk:curSk.id,lv:curSk.lv}},answer:answer,openParent:openParent,openMap:openMap,openLog:openLog,openBadges:openBadges,factCard:factCard,start:start,FX:FX,reset:function(){S=fresh();save()}};
 if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(function(){});
+
+// challenge ladder on the title screen: every rank, current one lit
+function ladder(){var el=$('ladder');if(!el)return;var L=lvl();el.innerHTML=RANKS.map(function(r,i){var nx=RANKS[i+1],on=L>=r[0]&&(!nx||L<nx[0]),got=L>=r[0];return'<span class="rk'+(on?' on':got?' got':'')+'">'+r[1]+'<small>Lv '+r[0]+'</small></span>'}).join('')+(S.deepBest?'<div class="db">\ud83c\udf0c Deep Space best: '+S.deepBest+'</div>':'')}
+ladder();
+window.__gm={ok:function(){answer(true)},st:function(){return[dDepth,S.deepBest,S.L.toFixed(2),deepL(),lvl()]}};// test hook
 })();
