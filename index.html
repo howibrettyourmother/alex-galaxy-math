@@ -7,7 +7,7 @@
 <meta name="description" content="Pilot a starship, blast asteroids with math, warp to real planets and stars, and collect space facts.">
 <meta property="og:title" content="Alex's Galaxy Math 🚀"><meta property="og:image" content="https://howibrettyourmother.github.io/alex-galaxy-math/og.png">
 <link rel="manifest" href="manifest.json"><link rel="icon" href="favicon-32.png"><link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="stylesheet" href="game.css?v=1.2.0">
+<link rel="stylesheet" href="game.css?v=1.3.0">
 </head><body>
 <canvas id="sky"></canvas>
 <div id="hud" class="hide"><span class="chip" id="rank"></span><div id="fuelWrap"><div id="fuel"></div><span>WARP FUEL</span></div><span class="chip" id="streak"></span><span class="chip hide" id="timer"></span><span class="sp"></span><button class="ib" id="hMap" aria-label="map">🗺️</button><button class="ib" id="hLog" aria-label="logbook">📖</button><button class="ib" id="hBack" aria-label="menu">⏸</button><button class="ib" id="gear" aria-label="parent">⚙️</button></div>
@@ -23,7 +23,7 @@
 <div id="fact" class="ov hide" style="z-index:25"><div id="factCard"></div></div>
 <div id="gate" class="hide">Grown-ups: keep holding…<div id="gateBar"><div></div></div></div>
 <div id="banner"></div>
-<script src="data.js?v=1.2.0"></script><script src="skills.js?v=1.2.0"></script><script src="voice.js?v=1.2.0"></script><script src="fx.js?v=1.2.0"></script><script src="game.js?v=1.2.0"></script>
+<script src="data.js?v=1.3.0"></script><script src="skills.js?v=1.3.0"></script><script src="voice.js?v=1.3.0"></script><script src="fx.js?v=1.3.0"></script><script src="game.js?v=1.3.0"></script>
 <script>/*hub-home*/(function(){var own='alex',k;try{k=localStorage.kidsHub}catch(e){}if(k!=='zoe'&&k!=='alex')k=own;
 var u=k==='zoe'?'/doodle-and-zoe/':'/alex-games/',b=document.createElement('div');b.id='hubHome';b.setAttribute('role','button');b.setAttribute('aria-label','hold to go home');
 b.innerHTML='<svg width="38" height="38" viewBox="0 0 38 38" style="position:absolute;left:0;top:0;pointer-events:none"><circle cx="19" cy="19" r="16" fill="none" stroke="#ffd54a" stroke-width="4" stroke-linecap="round" stroke-dasharray="100.5" stroke-dashoffset="100.5" transform="rotate(-90 19 19)"/></svg><span style="position:relative;pointer-events:none">🏠</span>';
@@ -43,7 +43,7 @@ b.addEventListener('touchstart',down,{passive:false});b.addEventListener('touche
 b.addEventListener('mousedown',down);b.addEventListener('mouseup',up);b.addEventListener('mouseleave',function(e){if(on)up(e)});
 ['pointerdown','pointerup','click'].forEach(function(n){b.addEventListener(n,stop)});
 function add(){document.body.appendChild(b);document.body.appendChild(hint)}if(document.body)add();else addEventListener('DOMContentLoaded',add)})();</script>
-<script>/*bgm*/window.BGM_CFG={"id":"alex-galaxy-math","base":"music/","v":"20261023m","tracks":{"title":[109.090909,1.0],"explore":[115.2,1.0]},"map":{},"pos":"left:10px;top:58px","oneshot":"warp","poll":function(){var t=document.getElementById('title'),m=window.__M,w=!!(m&&m.FX&&m.FX.warping),G=window.__bgmW||(window.__bgmW={on:false,n:0});if(w&&!G.on)G.n++;G.on=w;return{area:(t&&!/\bhide\b/.test(t.className))?'title':'explore',oneshot:G.n?('w'+G.n):''}}};</script><script src="music/bgm.js?v=20261023m" defer></script>
+<script>/*bgm*/window.BGM_CFG={"id":"alex-galaxy-math","base":"music/","v":"20261023m","tracks":{"title":[109.090909,1.0],"explore":[115.2,1.0]},"map":{},"pos":"left:10px;top:58px","oneshot":"warp","poll":function(){var t=document.getElementById('title'),m=window.__M,w=!!(m&&m.FX&&m.FX.warping),G=window.__bgmW||(window.__bgmW={on:false,n:0});if(w&&!G.on)G.n++;G.on=w;return{area:(t&&!/\bhide\b/.test(t.className))?'title':'explore',oneshot:G.n?('w'+G.n):'',speaking:!!(window.__vSpk&&window.__vSpk())}}};</script><script src="music/bgm.js?v=20261023m" defer></script>
 <script>/*sw-reload*/(function(){if(!('serviceWorker' in navigator))return;var sw=navigator.serviceWorker,had=!!sw.controller,done=false;
 sw.addEventListener('controllerchange',function(){if(!had){had=true;return}if(done)return;done=true;try{if(sessionStorage.swReloaded&&Date.now()-sessionStorage.swReloaded<10000)return;sessionStorage.swReloaded=Date.now()}catch(e){}location.reload()});
 function up(){if(sw.getRegistration)sw.getRegistration().then(function(g){if(g)g.update()}).catch(function(){})}

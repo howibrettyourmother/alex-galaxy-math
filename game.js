@@ -8,10 +8,13 @@ var F=fresh();for(var k in F)if(S[k]===undefined)S[k]=F[k];
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 // ---------- audio: WebAudio buffers, per-sound cooldown, max 3 voices, same sound cuts itself ----------
 var AC=null,BUF={},VO=[],LAST={},CD={tap:70,zap:110,boom:220,miss:400,levelup:800,firework:140,ding:300};
-function initAudio(){if(AC)return;var C=window.AudioContext||window.webkitAudioContext;if(!C)return;AC=new C();
+function initAudio(){if(AC)return;var C=window.AudioContext||window.webkitAudioContext;if(!C)return;AC=new C();try{AC.addEventListener('statechange',function(){if(AC.state==='interrupted')setTimeout(wake,300)})}catch(e){}
  Object.keys(CD).forEach(function(n){var x=new XMLHttpRequest();x.open('GET','sfx/'+n+'.mp3');x.responseType='arraybuffer';x.onload=function(){try{AC.decodeAudioData(x.response,function(b){BUF[n]=b},function(){})}catch(e){}};x.send()})}
-function unlock(){initAudio();if(AC&&AC.state==='suspended')AC.resume()}
-document.addEventListener('touchstart',unlock,{passive:true});document.addEventListener('pointerdown',unlock);
+function unlock(){initAudio();if(AC&&AC.state!=='running'&&AC.state!=='closed'){try{var p=AC.resume();if(p&&p.catch)p.catch(function(){})}catch(e){}}}
+// iOS: touchend/click also count as a user gesture; resume after an 'interrupted' state (call, Siri, background) on any touch or when the page comes back
+['touchstart','touchend','pointerdown','click','keydown'].forEach(function(e){document.addEventListener(e,unlock,{passive:true,capture:true})});
+function wake(){if(AC&&!document.hidden&&AC.state!=='running'&&AC.state!=='closed'){try{var p=AC.resume();if(p&&p.catch)p.catch(function(){})}catch(e){}}}
+addEventListener('pageshow',wake);addEventListener('focus',wake);document.addEventListener('visibilitychange',function(){if(!document.hidden)wake()});
 function sfx(n,vol){if(!AC||!BUF[n])return;var now=performance.now();if(LAST[n]&&now-LAST[n]<CD[n])return;LAST[n]=now;
  VO=VO.filter(function(v){if(v.n===n){try{v.s.stop()}catch(e){}return false}return v.end>AC.currentTime});
  while(VO.length>=3){var o=VO.shift();try{o.s.stop()}catch(e){}}
@@ -20,9 +23,10 @@ function sfx(n,vol){if(!AC||!BUF[n])return;var now=performance.now();if(LAST[n]&
 var VB={},vGen=0,vSrc=[];
 function vLoad(k){if(VB[k])return VB[k];VB[k]=new Promise(function(res){var x=new XMLHttpRequest();x.open('GET','voice/'+k+'.mp3');x.responseType='arraybuffer';
  x.onload=function(){try{AC.decodeAudioData(x.response,res,function(){res(null)})}catch(e){res(null)}};x.onerror=function(){res(null)};x.send()}).then(function(b){if(!b)delete VB[k];return b});return VB[k]}
-function hush(){vGen++;vSrc.forEach(function(s){try{s.stop()}catch(e){}});vSrc=[]}
+var vEnd=0;window.__vSpk=function(){return !!AC&&AC.currentTime<vEnd};  // music ducks while a question is spoken (bgm poll)
+function hush(){vGen++;vEnd=0;vSrc.forEach(function(s){try{s.stop()}catch(e){}});vSrc=[]}
 function speakQ(q){if(!AC||!window.QV)return;hush();var g=vGen,ks=QV.parts(q);Promise.all(ks.map(vLoad)).then(function(bs){if(g!==vGen)return;var t=AC.currentTime+.05;
- bs.forEach(function(b){if(!b)return;var s=AC.createBufferSource(),gn=AC.createGain();gn.gain.value=1;s.buffer=b;s.connect(gn);gn.connect(AC.destination);s.start(t);vSrc.push(s);t+=b.duration+.06})})}
+ bs.forEach(function(b){if(!b)return;var s=AC.createBufferSource(),gn=AC.createGain();gn.gain.value=1;s.buffer=b;s.connect(gn);gn.connect(AC.destination);s.start(t);vSrc.push(s);t+=b.duration+.06});vEnd=t})}
 // ---------- helpers ----------
 function lvl(){return Math.floor(S.L)}
 function rank(l){var r=RANKS[0][1];RANKS.forEach(function(x){if(l>=x[0])r=x[1]});return r}

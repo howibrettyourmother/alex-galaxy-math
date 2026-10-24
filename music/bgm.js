@@ -87,7 +87,7 @@ function tick(){
   var area=st.area==null?'':String(st.area);
   var m=!!st.muted;if(m!==muted){muted=m;apply()}
   var s=!!st.speaking;
-  if(s!==spk&&ctx){spk=s;var t=now();duck.gain.cancelScheduledValues(t);duck.gain.setValueAtTime(duck.gain.value,t);duck.gain.linearRampToValueAtTime(s?0.5:1,t+(s?0.15:0.6))}
+  if(s!==spk&&ctx){spk=s;var t=now();duck.gain.cancelScheduledValues(t);duck.gain.setValueAtTime(duck.gain.value,t);duck.gain.linearRampToValueAtTime(s?0.3:1,t+(s?0.04:0.25))}
   BGM.area=area;
   var name=cfg.map.hasOwnProperty(area)?cfg.map[area]:(cfg.tracks[area]?area:(cfg.dflt==null?'':cfg.dflt));
   if(st.oneshot&&cfg.oneshot)playOne(st.oneshot);
