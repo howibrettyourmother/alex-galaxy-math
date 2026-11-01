@@ -62,7 +62,8 @@ function newQ(){curSk=pickSkill();lastSk=curSk;cur=curSk.g();typed='';qStart=per
 // ---------- question UI ----------
 function renderQ(){var c=cur;$('qtop').textContent=curSk.tp+' \u2022 Level '+lvl();var q=$('qtext');q.innerHTML=String(c.q).replace(/\n/g,'<br>');q.className=String(c.q).length>34?'long':'';
  $('qvis').innerHTML=c.vis||'';var sp=$('qsay');if(!sp){sp=document.createElement('button');sp.id='qsay';sp.setAttribute('aria-label','Read it to me');sp.textContent='\ud83d\udd0a';$('card').appendChild(sp);tap(sp,function(){unlock();speakQ(cur.q)})}
- hush();// read only when 🔊 is tappedvar pad=$('pad');pad.innerHTML='';hide('fb');$('card').className='';
+ hush();// read only when 🔊 is tapped
+ var pad=$('pad');pad.innerHTML='';hide('fb');$('card').className='';
  if(c.ch){hide('ansBox');c.ch.forEach(function(v){var b=document.createElement('button');b.className='k mc'+(c.em?' em':'');b.textContent=v;tap(b,function(){if(busy)return;sfx('tap',.5);answer(v===String(c.a))});pad.appendChild(b)})}
  else{show('ansBox');$('ansBox').textContent='';['1','2','3','4','5','6','7','8','9','\u232b','0','GO'].forEach(function(v){var b=document.createElement('button');b.className='k'+(v==='GO'?' go':v==='\u232b'?' del':'');b.textContent=v;
   b.addEventListener('pointerdown',function(e){e.preventDefault();if(busy)return;b.classList.add('pr');setTimeout(function(){b.classList.remove('pr')},120);key(v)});pad.appendChild(b)})}}
