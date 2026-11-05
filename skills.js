@@ -114,4 +114,27 @@ var SK=[
 {id:'m3x1',lv:38,tp:'Multiplication',t:28,g:function(){var a=R(102,489),b=R(3,9);return{q:a+' \u00d7 '+b+' = ?',a:a*b,h:'Hundreds, tens, ones \u2014 multiply each, then add.'}}},
 {id:'fcmp2',lv:39,tp:'Fractions',t:18,g:function(){var o=P([['2/3','3/5'],['3/4','2/3'],['5/8','1/2'],['4/5','3/4'],['5/6','4/5']]);return{q:'Which is BIGGER?',ch:shuf(o.slice()),a:o[0],h:'Think how much is missing from a whole.'}}},
 {id:'boss',lv:40,tp:'Logic',t:40,g:function(){var x=R(3,9),a=R(2,6),b=R(2,9);return P([{q:'\u25a1 \u00d7 \u25a1 = '+x*x,a:x,h:'Which number times itself?'},{q:'('+a+' \u00d7 \u25a1) \u2212 '+b+' = '+(a*x-b),a:x,h:'Undo \u2212'+b+', then \u00f7 '+a},{q:fmt(1000*a+x)+' \u2212 '+fmt(999)+' = ?',a:1000*a+x-999,h:'\u2212 1000, then + 1'}])}},
+
+// ---- levels 41-50: deep stretch for Alex (Nov 2026) ----
+{id:'m3x2',lv:41,tp:'Multiplication',t:35,g:function(){var a=R(12,29),b=R(11,19);return{q:a+' \u00d7 '+b+' = ?',a:a*b,h:'('+a+' \u00d7 10) + ('+a+' \u00d7 '+(b-10)+')'}}},
+{id:'divL',lv:41,tp:'Division',t:30,g:function(){var b=R(4,9),q=R(25,89);return{q:(b*q)+' \u00f7 '+b+' = ?',a:q,h:'Tens first, then ones.'}}},
+{id:'fsub',lv:42,tp:'Fractions',t:18,g:function(){var d=P([5,6,8,10]),a=R(3,d-1),b=R(1,a-1);return{q:a+'/'+d+' \u2212 '+b+'/'+d+' = ?',ch:mc((a-b)+'/'+d,[(a-b)+'/'+(2*d),(a+b)+'/'+d,(a-b+1)+'/'+d]),a:(a-b)+'/'+d,h:'Same size pieces: subtract the tops.'}}},
+{id:'word6',lv:42,tp:'Word Problems',t:40,g:function(){var a=R(5,12),b=R(3,8),c=R(2,6);return P([
+ {q:'A tank squad has '+a+' tanks. Each tank fires '+b+' shells a minute for '+c+' minutes. How many shells?',a:a*b*c,h:a+' \u00d7 '+b+' \u00d7 '+c},
+ {q:a+' jet packs cost '+b+' coins each. You pay with '+(a*b+c)+' coins. How much change?',a:c,h:(a*b+c)+' \u2212 '+a+' \u00d7 '+b},
+ {q:'Volcano rocks: '+a+' big piles of '+b+', plus '+c+' leftover. How many rocks?',a:a*b+c,h:a+' \u00d7 '+b+' + '+c}])}},
+{id:'ops4',lv:43,tp:'Logic',t:28,g:function(){var a=R(3,9),b=R(2,8),c=R(2,7),d=R(2,5);return P([{q:'('+a+' \u00d7 '+b+') + ('+c+' \u00d7 '+d+') = ?',a:a*b+c*d,h:'Both \u00d7 first.'},{q:a+' \u00d7 '+b+' \u00d7 '+c+' \u2212 '+d+' = ?',a:a*b*c-d,h:'Multiply left to right, then \u2212.'}])}},
+{id:'pv5',lv:44,tp:'Place Value',t:16,g:function(){var n=R(10000,99999);var t=Math.floor(n/10000),th=Math.floor(n/1000)%10;return P([{q:'How many ten-thousands in '+fmt(n)+'?',a:t,h:'The leftmost digit.'},{q:'Round '+fmt(n)+' to the nearest thousand.',a:Math.round(n/1000)*1000,h:'Look at the hundreds digit.'},{q:fmt(t*10000+th*1000)+' is how many thousands?',a:t*10+th,h:'Ten-thousands = 10 thousands each.'}])}},
+{id:'m4x1',lv:45,tp:'Multiplication',t:32,g:function(){var a=R(1023,4899),b=R(3,9);return{q:fmt(a)+' \u00d7 '+b+' = ?',a:a*b,h:'Multiply each place, then add.'}}},
+{id:'ldiv2',lv:46,tp:'Division',t:35,g:function(){var b=R(5,12),q=R(31,199);return{q:fmt(b*q)+' \u00f7 '+b+' = ?',a:q,h:'How many groups of '+b+'?'}}},
+{id:'feq2',lv:47,tp:'Fractions',t:20,g:function(){var d=P([3,4,5,6]),k=R(2,5),ans=k+'/'+(d*k);return{q:'Which equals '+k+'/'+(d*k)+'?',ch:mc('1/'+d,[k+'/'+(d*k+1),'1/'+(d+1),(k+1)+'/'+(d*k)]),a:'1/'+d,h:'Divide top and bottom by '+k+'.'}}},
+{id:'logic4',lv:48,tp:'Logic',t:30,g:function(){var x=R(4,12),a=R(2,8),b=R(2,20);return P([{q:a+' \u00d7 \u25a1 + '+b+' = '+(a*x+b),a:x,h:'Undo +'+b+', then \u00f7'+a},{q:'\u25a1 \u00d7 \u25a1 + '+a+' = '+(x*x+a),a:x,h:'Which number times itself, then +'+a+'?'}])}},
+{id:'word7',lv:49,tp:'Word Problems',t:45,g:function(){var a=R(6,14),b=R(4,9),c=R(2,5),d=R(3,8);return P([
+ {q:a+' tanks each haul '+b+' crates. '+c+' crates fall off. How many crates arrive?',a:a*b-c,h:a+' \u00d7 '+b+' \u2212 '+c},
+ {q:'A jet flies '+a+' miles a minute for '+b+' minutes, then '+c+' more miles. Total miles?',a:a*b+c,h:a+' \u00d7 '+b+' + '+c},
+ {q:d+' volcanoes erupt '+a+' rocks each, twice. How many rocks?',a:d*a*2,h:d+' \u00d7 '+a+' \u00d7 2'}])}},
+{id:'boss50',lv:50,tp:'Logic',t:50,g:function(){var x=R(5,12),a=R(3,9),b=R(2,15),c=R(2,8);return P([
+ {q:'\u25a1 \u00d7 \u25a1 \u00d7 \u25a1 = '+x*x*x,a:x,h:'Same number three times.'},
+ {q:'('+a+' \u00d7 \u25a1) + '+b+' = '+(a*x+b),a:x,h:'Undo +'+b+', then \u00f7'+a},
+ {q:fmt(100*a+10*c+x)+' \u2212 '+fmt(99)+' = ?',a:100*a+10*c+x-99,h:'\u2212 100, then + 1'}])}},
 ];

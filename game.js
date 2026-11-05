@@ -44,7 +44,7 @@ function T(n){if(!S.tp[n])S.tp[n]={n:0,c:0,last:[],hi:0};return S.tp[n]}
 function tStatus(t){if(!t||t.n===0)return'new';var l=t.last.slice(-10),a=l.filter(Boolean).length/l.length;if(t.n>=8&&l.length>=8&&a>=.8)return'mastered';if(l.length>=5&&a<.6)return'struggling';return'working'}
 // ---------- adaptive engine ----------
 var cur=null,curSk=null,lastSk=null,ease=false,missRow=0,qStart=0,typed='',busy=false,blitz=false,deep=false,dDepth=0,dStart=1,bEnd=0,bScore=0,sess=null;
-function deepL(){return Math.min(40,dStart+Math.floor(dDepth/2))}
+function deepL(){return Math.min(50,dStart+Math.floor(dDepth/2))}
 function pickSkill(){var L=deep?deepL():lvl(),pool=SK.filter(function(s){return s.lv<=L});
  if(ease){var e=pool.filter(function(s){return s.lv<=Math.max(1,L-2)});if(e.length)pool=e}
  var w=pool.map(function(s){var d=L-s.lv,x=d<=1?5:d<=3?3:d<=6?1.2:.4;if(tStatus(S.tp[s.tp])==='struggling')x*=1.6;if(s===lastSk)x*=.25;return x});
@@ -53,10 +53,10 @@ function grade(ok,ms){var s=curSk,t=T(s.tp),before=lvl(),fast=ms<s.t*1000;S.tota
  S.recent.push({ok:ok?1:0,ms:Math.round(ms),lv:s.lv,tp:s.tp,d:Date.now()});if(S.recent.length>100)S.recent.shift();
  if(sess){sess.n++;if(ok)sess.c++;sess.end=lvl()}
  if(ok){S.correct++;t.c++;if(s.lv>t.hi)t.hi=s.lv;S.streak++;if(S.streak>S.best)S.best=S.streak;if(missRow>0){S.back++}missRow=0;ease=false;
-  S.L+=0.3+(fast?0.25:0)+(S.streak>=3?0.15:0);if(S.streak>0&&S.streak%5===0)S.L=Math.floor(S.L)+1.05;// 5 in a row = warp jump up a level
+  S.L+=0.35+(fast?0.3:0)+(S.streak>=3?0.2:0)+(S.streak>=8?0.15:0);if(S.streak>0&&S.streak%5===0)S.L=Math.floor(S.L)+1.05;if(S.streak>0&&S.streak%10===0)S.L=Math.floor(S.L)+1.2;// 5 in a row = warp jump up a level
   if(deep){dDepth++;if(dDepth>S.deepBest)S.deepBest=dDepth}}
  else{S.streak=0;missRow++;S.L-=0.3+(missRow>=2?0.25:0);ease=missRow>=2}
- S.L=Math.max(1,Math.min(40.99,S.L));if(lvl()>S.maxL)S.maxL=lvl();if(sess)sess.end=lvl();
+ S.L=Math.max(1,Math.min(50.99,S.L));if(lvl()>S.maxL)S.maxL=lvl();if(sess)sess.end=lvl();
  badgeCheck();save();return lvl()-before}
 function newQ(){curSk=pickSkill();lastSk=curSk;cur=curSk.g();typed='';qStart=performance.now();busy=false;renderQ()}
 // ---------- question UI ----------
@@ -85,7 +85,7 @@ var bT=0;function banner(a,b){var el=$('banner');el.innerHTML=a+(b?'<small>'+b+'
 // ---------- badges ----------
 function give(id){if(S.badges.indexOf(id)>=0)return;S.badges.push(id);var b=BADGES.filter(function(x){return x[0]===id})[0];setTimeout(function(){banner(b[1]+' '+b[2],'New badge!');sfx('ding')},1100)}
 function badgeCheck(){if(S.correct>=1)give('first');if(S.best>=5)give('s5');if(S.best>=10)give('s10');if(S.best>=20)give('s20');
- [5,10,15,20,24,30,40].forEach(function(l){if(S.maxL>=l)give('lv'+l)});if(S.blasts>=25)give('blast25');if(S.blasts>=100)give('blast100');if(S.back>=5)give('back5');
+ [5,10,15,20,24,30,40,50].forEach(function(l){if(S.maxL>=l)give('lv'+l)});if(S.blasts>=25)give('blast25');if(S.blasts>=100)give('blast100');if(S.back>=5)give('back5');
  if(S.log.length>=8)give('facts8');if(S.log.length>=DEST.length)give('factsAll');if(S.blitzBest>=15)give('blitz15');if(S.deepBest>=25)give('deep25');if(S.deepBest>=60)give('deep60');
  if(TOPICS.filter(function(t){return tStatus(S.tp[t])==='mastered'}).length>=3)give('master3')}
 // ---------- arrivals / fact cards ----------
@@ -128,7 +128,7 @@ function openParent(){show('parent');var r20=S.recent.slice(-20),r100=S.recent,a
  '<h3>Topics</h3><table><tr><th>Topic</th><th>Tries</th><th>Last 10</th><th>Hardest</th><th>Status</th></tr>'+rows+'</table>'+
  '<h3>Recent sessions</h3><table><tr><th>When</th><th>Problems</th><th>Accuracy</th><th>Level</th></tr>'+(ses||'<tr><td colspan=4>None yet</td></tr>')+'</table>'+
  '<h3>Settings</h3><div>Set level: <button class="pb" id="pDn">\u2212</button> <b id="pLv">'+lvl()+'</b> <button class="pb" id="pUp">+</button> <button class="pb red" id="pReset">Reset all progress</button></div><p style="color:#778;font-size:12px">Saved on this device only (localStorage). Adaptation: +level for right answers (more if quick), gentle step back and easier review after a miss. No timers except optional Blitz.</p>';
- function setL(v){S.L=Math.max(1,Math.min(40,v));if(lvl()>S.maxL)S.maxL=lvl();S.at=Math.min(S.at,destIdx(lvl()));if(destIdx(lvl())>S.at)S.at=destIdx(lvl());FX.setDest(S.at);save();openParent();hud()}
+ function setL(v){S.L=Math.max(1,Math.min(50,v));if(lvl()>S.maxL)S.maxL=lvl();S.at=Math.min(S.at,destIdx(lvl()));if(destIdx(lvl())>S.at)S.at=destIdx(lvl());FX.setDest(S.at);save();openParent();hud()}
  tap($('pDn'),function(){setL(lvl()-1)});tap($('pUp'),function(){setL(lvl()+1)});tap($('pReset'),function(){if(confirm('Reset all of Alex\u2019s progress?')){S=fresh();save();openParent();hud()}})}
 // ---------- wire up ----------
 tap($('bPlay'),function(){sfx('tap');start(false)});tap($('bBlitz'),function(){sfx('tap');start(true)});tap($('bDeep'),function(){sfx('tap');start(false,true)});
