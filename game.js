@@ -7,6 +7,8 @@ var S;try{S=JSON.parse(localStorage.getItem(KEY))||fresh()}catch(e){S=fresh()}
 var F=fresh();for(var k in F)if(S[k]===undefined)S[k]=F[k];
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 // ---------- audio: WebAudio buffers, per-sound cooldown, max 3 voices, same sound cuts itself ----------
+// mute (remembered on this iPad) silences sounds, spoken questions and music; pause freezes Blitz and silences everything
+var muted=(function(){try{return localStorage.getItem('agm_muted')==='1'}catch(e){return false}})(),paused=false;window.__agmMuted=muted;
 var AC=null,BUF={},VO=[],LAST={},CD={tap:70,zap:110,boom:220,miss:400,levelup:800,firework:140,ding:300};
 function initAudio(){if(AC)return;var C=window.AudioContext||window.webkitAudioContext;if(!C)return;AC=new C();try{AC.addEventListener('statechange',function(){if(AC.state==='interrupted')setTimeout(wake,300)})}catch(e){}
  Object.keys(CD).forEach(function(n){var x=new XMLHttpRequest();x.open('GET','sfx/'+n+'.mp3');x.responseType='arraybuffer';x.onload=function(){try{AC.decodeAudioData(x.response,function(b){BUF[n]=b},function(){})}catch(e){}};x.send()})}
@@ -15,7 +17,7 @@ function unlock(){initAudio();if(AC&&AC.state!=='running'&&AC.state!=='closed'){
 ['touchstart','touchend','pointerdown','click','keydown'].forEach(function(e){document.addEventListener(e,unlock,{passive:true,capture:true})});
 function wake(){if(AC&&!document.hidden&&AC.state!=='running'&&AC.state!=='closed'){try{var p=AC.resume();if(p&&p.catch)p.catch(function(){})}catch(e){}}}
 addEventListener('pageshow',wake);addEventListener('focus',wake);document.addEventListener('visibilitychange',function(){if(!document.hidden)wake()});
-function sfx(n,vol){if(!AC||!BUF[n])return;var now=performance.now();if(LAST[n]&&now-LAST[n]<CD[n])return;LAST[n]=now;
+function sfx(n,vol){if(!AC||!BUF[n]||muted||paused)return;var now=performance.now();if(LAST[n]&&now-LAST[n]<CD[n])return;LAST[n]=now;
  VO=VO.filter(function(v){if(v.n===n){try{v.s.stop()}catch(e){}return false}return v.end>AC.currentTime});
  while(VO.length>=3){var o=VO.shift();try{o.s.stop()}catch(e){}}
  var s=AC.createBufferSource(),g=AC.createGain();g.gain.value=vol||0.8;s.buffer=BUF[n];s.connect(g);g.connect(AC.destination);s.start();VO.push({n:n,s:s,end:AC.currentTime+BUF[n].duration})}
@@ -25,7 +27,7 @@ function vLoad(k){if(VB[k])return VB[k];VB[k]=new Promise(function(res){var x=ne
  x.onload=function(){try{AC.decodeAudioData(x.response,res,function(){res(null)})}catch(e){res(null)}};x.onerror=function(){res(null)};x.send()}).then(function(b){if(!b)delete VB[k];return b});return VB[k]}
 var vEnd=0;window.__vSpk=function(){return !!AC&&AC.currentTime<vEnd};  // music ducks while a question is spoken (bgm poll)
 function hush(){vGen++;vEnd=0;vSrc.forEach(function(s){try{s.stop()}catch(e){}});vSrc=[]}
-function speakQ(q){if(!AC||!window.QV)return;hush();var g=vGen,ks=QV.parts(q);Promise.all(ks.map(vLoad)).then(function(bs){if(g!==vGen)return;var t=AC.currentTime+.05;
+function speakQ(q){if(!AC||!window.QV||muted)return;hush();var g=vGen,ks=QV.parts(q);Promise.all(ks.map(vLoad)).then(function(bs){if(g!==vGen)return;var t=AC.currentTime+.05;
  bs.forEach(function(b){if(!b)return;var s=AC.createBufferSource(),gn=AC.createGain();gn.gain.value=1;s.buffer=b;s.connect(gn);gn.connect(AC.destination);s.start(t);vSrc.push(s);t+=b.duration+.06});vEnd=t})}
 // ---------- helpers ----------
 function lvl(){return Math.floor(S.L)}
@@ -99,7 +101,7 @@ function onWarpDone(){var tgt=destIdx(lvl());if(tgt>S.at){S.at++;FX.setDest(S.at
 function start(b,dp){blitz=!!b;deep=!!dp;dDepth=0;dStart=Math.max(1,lvl()-1);unlock();hide('title');show('game');show('hud');sess={d:Date.now(),n:0,c:0,startL:lvl(),end:lvl(),blitz:b?1:0};S.sessions.push(sess);if(S.sessions.length>30)S.sessions.shift();
  FX.setDest(S.at);hud();if(b){bEnd=Date.now()+90000;bScore=0;show('timer');tick()}else if(deep){show('timer')}else hide('timer');
  if(S.log.indexOf(DEST[S.at].id)<0){logDest(S.at);factCard(S.at,true,newQ)}else newQ()}
-function tick(){if(!blitz)return;var r=Math.max(0,Math.ceil((bEnd-Date.now())/1000));$('timer').textContent='\u23f1 '+r;if(r<=0){endBlitz();return}setTimeout(tick,250)}
+function tick(){if(!blitz||paused)return;var r=Math.max(0,Math.ceil((bEnd-Date.now())/1000));$('timer').textContent='\u23f1 '+r;if(r<=0){endBlitz();return}setTimeout(tick,250)}
 function endBlitz(){blitz=false;busy=true;if(bScore>S.blitzBest)S.blitzBest=bScore;badgeCheck();save();hide('timer');FX.fireworks(8);sfx('firework');
  var fb=$('fb');show('fb');fb.innerHTML='<h2>\u26a1 Blitz over!</h2><p>You blasted '+bScore+' problems!</p><p class="hint">Best: '+S.blitzBest+'</p><button class="big green" id="fbGo">Keep exploring</button>';tap($('fbGo'),function(){newQ()})}
 function toTitle(){hide('game');hide('hud');show('title');blitz=false;deep=false;ladder();$('tlv').textContent=rank(lvl())+' \u2022 Level '+lvl()+' \u2022 '+DEST[S.at].name}
@@ -133,7 +135,13 @@ function openParent(){show('parent');var r20=S.recent.slice(-20),r100=S.recent,a
 // ---------- wire up ----------
 tap($('bPlay'),function(){sfx('tap');start(false)});tap($('bBlitz'),function(){sfx('tap');start(true)});tap($('bDeep'),function(){sfx('tap');start(false,true)});
 tap($('bMap'),function(){sfx('tap',.5);openMap()});tap($('bLog'),function(){sfx('tap',.5);openLog()});tap($('bBadge'),function(){sfx('tap',.5);openBadges()});
-tap($('hMap'),function(){sfx('tap',.5);openMap()});tap($('hLog'),function(){sfx('tap',.5);openLog()});tap($('hBack'),function(){sfx('tap',.5);toTitle()});
+tap($('hMap'),function(){sfx('tap',.5);openMap()});tap($('hLog'),function(){sfx('tap',.5);openLog()});tap($('hBack'),function(){sfx('tap',.5);pauseGame()});tap($('hMute'),function(){setMuted(!muted)});tap($('pMute'),function(){setMuted(!muted)});
+tap($('pRes'),function(){resumeGame();sfx('tap',.5)});tap($('pMenu'),function(){resumeGame();sfx('tap',.5);toTitle()});
+function paintMute(){$('hMute').textContent=muted?'\ud83d\udd07':'\ud83d\udd0a';$('pMute').textContent=muted?'\ud83d\udd07 Sound off':'\ud83d\udd0a Sound on'}
+function setMuted(m){muted=m;window.__agmMuted=m;try{localStorage.setItem('agm_muted',m?'1':'0')}catch(e){}if(m){hush();VO.forEach(function(v){try{v.s.stop()}catch(e){}});VO=[]}paintMute();if(!m)sfx('tap',.5)}
+var pT0=0,bLeft=0;function pauseGame(){if(paused)return;paused=true;window.__agmPaused=true;pT0=performance.now();hush();if(blitz)bLeft=bEnd-Date.now();show('pauseOv');hubSave()}
+function resumeGame(){if(!paused)return;paused=false;window.__agmPaused=false;qStart+=performance.now()-pT0;if(blitz){bEnd=Date.now()+bLeft;tick()}hide('pauseOv')}
+paintMute();
 Array.prototype.forEach.call(document.querySelectorAll('.x'),function(x){tap(x,function(){sfx('tap',.4);hide(x.getAttribute('data-c'))})});
 addEventListener('resize',function(){if(!$('map').classList.contains('hide'))openMap()});
 var FX=window.makeFX($('sky'),{onBlast:function(){S.blasts++;badgeCheck();save()},onWarp:onWarpDone,onFuelFull:function(){sfx('levelup',.5);banner('WARP SPEED!','')},sfx:sfx});
