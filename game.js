@@ -21,10 +21,11 @@ function sfx(n,vol){if(!AC||!BUF[n]||muted||paused)return;var now=performance.no
  VO=VO.filter(function(v){if(v.n===n){try{v.s.stop()}catch(e){}return false}return v.end>AC.currentTime});
  while(VO.length>=3){var o=VO.shift();try{o.s.stop()}catch(e){}}
  var s=AC.createBufferSource(),g=AC.createGain();g.gain.value=vol||0.8;s.buffer=BUF[n];s.connect(g);g.connect(AC.destination);s.start();VO.push({n:n,s:s,end:AC.currentTime+BUF[n].duration})}
-// ---------- spoken questions: natural pre-recorded clips (voice/*.mp3) chained in order ----------
+// ---------- spoken questions: ElevenLabs clips (audio/voice/{kid}/*.mp3) chained in order ----------
 var VB={},vGen=0,vSrc=[];
-function vLoad(k){if(VB[k])return VB[k];VB[k]=new Promise(function(res){var x=new XMLHttpRequest();x.open('GET','voice/'+k+'.mp3');x.responseType='arraybuffer';
- x.onload=function(){try{AC.decodeAudioData(x.response,res,function(){res(null)})}catch(e){res(null)}};x.onerror=function(){res(null)};x.send()}).then(function(b){if(!b)delete VB[k];return b});return VB[k]}
+function voiceKid(){try{if(window.KVX&&KVX.kid)return KVX.kid;var q=new URLSearchParams(location.search),k=q.get('kid')||q.get('mode');if(!k){try{k=localStorage.kidsHub}catch(e){}}if(k==='zoe')return'zoe'}catch(e){}return'alex'}
+function vLoad(k){var id=voiceKid()+'/'+k;if(VB[id])return VB[id];VB[id]=new Promise(function(res){if(!AC)return res(null);var x=new XMLHttpRequest();x.open('GET','audio/voice/'+id+'.mp3?v=20261120el2');x.responseType='arraybuffer';
+ x.onload=function(){try{AC.decodeAudioData(x.response,res,function(){res(null)})}catch(e){res(null)}};x.onerror=function(){res(null)};x.send()}).then(function(b){if(!b)delete VB[id];return b});return VB[id]}
 var vEnd=0;window.__vSpk=function(){return !!AC&&AC.currentTime<vEnd};  // music ducks while a question is spoken (bgm poll)
 function hush(){vGen++;vEnd=0;vSrc.forEach(function(s){try{s.stop()}catch(e){}});vSrc=[]}
 function speakQ(q){if(!AC||!window.QV||muted)return;hush();var g=vGen,ks=QV.parts(q);Promise.all(ks.map(vLoad)).then(function(bs){if(g!==vGen)return;var t=AC.currentTime+.05;
@@ -148,7 +149,7 @@ var FX=window.makeFX($('sky'),{onBlast:function(){S.blasts++;badgeCheck();save()
 try{if(S.fuel>0&&S.fuel<5)FX.fuel=S.fuel}catch(e){}
 function hubSave(){try{S.fuel=FX.fuel||0}catch(e){}save()}window.hubSave=hubSave;addEventListener('hubsave',hubSave);addEventListener('pagehide',hubSave);document.addEventListener('visibilitychange',function(){if(document.hidden)hubSave()});
 FX.setDest(S.at);toTitle();
-window.__M={S:function(){return S},grade:function(ok,ms){if(!curSk)curSk=pickSkill();var r=grade(ok,ms);curSk=pickSkill();return{L:S.L,lvl:lvl(),skill:curSk.id,skLv:curSk.lv}},newQ:newQ,cur:function(){return{q:cur.q,a:cur.a,sk:curSk.id,lv:curSk.lv}},answer:answer,openParent:openParent,openMap:openMap,openLog:openLog,openBadges:openBadges,factCard:factCard,start:start,FX:FX,reset:function(){S=fresh();save()}};
+window.__M={S:function(){return S},grade:function(ok,ms){if(!curSk)curSk=pickSkill();var r=grade(ok,ms);curSk=pickSkill();return{L:S.L,lvl:lvl(),skill:curSk.id,skLv:curSk.lv}},newQ:newQ,cur:function(){return{q:cur.q,a:cur.a,sk:curSk.id,lv:curSk.lv}},answer:answer,openParent:openParent,openMap:openMap,openLog:openLog,openBadges:openBadges,factCard:factCard,start:start,FX:FX,reset:function(){S=fresh();save()},speakQ:speakQ,vLoad:vLoad,voiceKid:voiceKid,ac:function(){return AC}};
 if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(function(){});
 
 // challenge ladder on the title screen: every rank, current one lit

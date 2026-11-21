@@ -55,7 +55,7 @@ AG.hide=hide;AG.show=show})();</script>
 <div id="fact" class="ov hide" style="z-index:25"><div id="factCard"></div></div>
 <div id="gate" class="hide">Grown-ups: keep holding…<div id="gateBar"><div></div></div></div>
 <div id="banner"></div>
-<script src="data.js?v=1.5.0"></script><script src="skills.js?v=1.5.0"></script><script src="voice.js?v=1.5.0"></script><script src="fx.js?v=1.5.0"></script><script src="game.js?v=1.5.0"></script>
+<script src="data.js?v=1.5.0"></script><script src="skills.js?v=1.5.0"></script><script src="voice.js?v=1.5.0"></script><script src="fx.js?v=1.5.0"></script><script src="game.js?v=20261120el2"></script>
 <script>/*bgm*/window.BGM_CFG={"id":"alex-galaxy-math","base":"music/","v":"20261115intro","intro":"intro","tracks":{"title":[48.0, 1.0],"explore":[48.0, 1.0]},"map":{},"pos":"left:10px;top:58px","oneshot":"warp","poll":function(){var t=document.getElementById('title'),m=window.__M,w=!!(m&&m.FX&&m.FX.warping),G=window.__bgmW||(window.__bgmW={on:false,n:0});if(w&&!G.on)G.n++;G.on=w;return{muted:!!(window.__agmMuted||window.__agmPaused),area:(t&&!/\bhide\b/.test(t.className))?'title':'explore',oneshot:G.n?('w'+G.n):'',speaking:!!(window.__vSpk&&window.__vSpk())}}};</script><script src="music/bgm.js?v=20261115intro" defer></script>
 <script>/*sw-reload*/(function(){if(!('serviceWorker' in navigator))return;var sw=navigator.serviceWorker,had=!!sw.controller,done=false;
 sw.addEventListener('controllerchange',function(){if(!had){had=true;return}if(done)return;done=true;try{if(sessionStorage.swReloaded&&Date.now()-sessionStorage.swReloaded<10000)return;sessionStorage.swReloaded=Date.now()}catch(e){}location.reload()});
@@ -126,7 +126,7 @@ b.addEventListener('mousedown',down);b.addEventListener('mouseup',up);b.addEvent
 ['pointerdown','pointerup','click'].forEach(function(n){b.addEventListener(n,stop)});
 function add(){document.body.appendChild(b);document.body.appendChild(hint);watchOffl()}if(document.body)add();else addEventListener('DOMContentLoaded',add)})();</script>
 
-<script src="audio/pack.js?v=20261120el"></script>
+<script src="audio/pack.js?v=20261120el2"></script>
 <script>
 (function(){
   function musicGain(){
@@ -148,9 +148,9 @@ function add(){document.body.appendChild(b);document.body.appendChild(hint);watc
     return null;
   }
   var kid='alex';
-  try{var q=new URLSearchParams(location.search); kid=q.get('kid')||q.get('mode')||'alex';}catch(e){}
+  try{var q=new URLSearchParams(location.search); kid=q.get('kid')||q.get('mode'); if(!kid){try{kid=localStorage.kidsHub}catch(e){}}}catch(e){}
   if(kid!=='zoe') kid='alex';
-  if(window.KVX) KVX.init({base:'audio/', getCtx:getCtx, musicGain:musicGain, kid:kid, v:'20261120el', preload:['sfx/ui_click','sfx/correct','sfx/win','sfx/pop','sfx/jump']});
+  if(window.KVX) KVX.init({base:'audio/', getCtx:getCtx, musicGain:musicGain, kid:kid, v:'20261120el2', preload:['sfx/ui_click','sfx/correct','sfx/win','sfx/pop','sfx/jump']});
   function wrap(obj, name, sfx){
     if(!obj||typeof obj[name]!=='function') return;
     var orig=obj[name];
